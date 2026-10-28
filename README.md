@@ -3,6 +3,12 @@
 Print-ready Indian marriage biodata in English, Hindi and Marathi. Pay once per
 PDF, no account. Built from scratch against the "Toran" design canvas.
 
+![Home Page](public/home-page-screenshot.png)
+
+## What it does
+
+BioMarriage Maker creates print-ready Indian marriage biodata (profiles) in English, Hindi, and Marathi. You choose from 26 design templates — Traditional, Devotional (Ganesha, Krishna, Shiva, Lakshmi), Modern, Minimal, and Premium — fill your family's details, and download a polished A4 PDF. No account, no subscription; pay once per PDF. Your data is kept private and deleted after 14 days.
+
 ## Run it
 
 ```bash
