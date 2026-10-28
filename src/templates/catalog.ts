@@ -9,7 +9,7 @@ import type { Motif } from './motifs.ts';
  * templates and 6 files.
  */
 
-export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 'artwork' | 't1' | 't2' | 't3' | 't4';
+export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 't1' | 't2' | 't3' | 't4';
 
 export type Collection = 'traditional' | 'devotional' | 'modern' | 'minimal' | 'premium' | 'hindi' | 'marathi';
 
@@ -23,7 +23,6 @@ export type TemplateDef = {
   /** Devotional templates take their colours from the deity theme instead. */
   accent?: string;
   motif?: Motif;
-  manifestId?: string;
   pricePaise: number;
   docLocales: DocLocale[];
   blurb: string;
@@ -66,7 +65,6 @@ export const SWATCHES: Record<LayoutKind, Swatch[]> = {
   ],
   devotional: [],
   chitra: [],
-  artwork: [],
   t1: [{ hex: '#7B1E2B', label: 'Maroon (TODO)' }],
   t2: [{ hex: '#145250', label: 'Teal green (TODO)' }],
   t3: [{ hex: '#6B3A1E', label: 'Golden brown (TODO)' }],
@@ -176,11 +174,7 @@ export const TEMPLATES: TemplateDef[] = [
   { slug: 't3-murugan-vel', title: 'Murugan Vel', collection: 'devotional', layout: 't3', accent: '#8A5A30', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_9372ce8f (full decorative parchment + rect photo + peacock feather border). Art must be regenerated at A4 ratio.' },
   { slug: 't4-stone-arch', title: 'Stone Arch', collection: 'premium', layout: 't4', accent: '#5A3A2B', pricePaise: PRICE.premium, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_30039c0 (carved stone decorative border + arched photo + deity niche).' },
 
-  // Artwork (image-based) templates
-  { slug: 'lakshmi-elephants-01', title: 'Lakshmi Elephants', collection: 'traditional', layout: 'artwork', manifestId: 'lakshmi-elephants-01', accent: '#7B1E2B', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Image-based artwork from Design Template.' },
-  { slug: 'green-lotus-02', title: 'Green Lotus', collection: 'traditional', layout: 'artwork', manifestId: 'green-lotus-02', accent: '#234E52', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Image-based artwork from Design Template.' },
-  { slug: 'murugan-vel-03', title: 'Murugan Vel', collection: 'devotional', layout: 'artwork', manifestId: 'murugan-vel-03', accent: '#800020', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Image-based artwork from Design Template.' },
-  { slug: 'stone-arch-04', title: 'Stone Arch', collection: 'premium', layout: 'artwork', manifestId: 'stone-arch-04', accent: '#5a3e2b', pricePaise: PRICE.premium, docLocales: ALL, pages: 1, blurb: 'Image-based artwork from Design Template.' }
+  // Note: manifest-based artwork system retired; designs rebuilt as t1-t4 above.
 ];
 
 export function templateBySlug(slug: string): TemplateDef | undefined {

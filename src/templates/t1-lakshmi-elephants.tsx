@@ -2,6 +2,7 @@ import type { Biodata } from '@/lib/biodata';
 import { buildSections } from './rows';
 import { labelsFor } from './labels';
 import { PAGE, PortraitPhoto } from './base-parts';
+import { A4 } from './render';
 
 /** T1 — Lakshmi with elephants (full decorative background, circle photo slot).
  *  Source: Design Template/image_146c7743.jpg (896x1200, ratio 0.7467 — must be
@@ -76,7 +77,7 @@ export function T1Template({ data, accent = '#7A3B1C' }: { data: Biodata; accent
       )}
 
       {/* Content body: split layout to avoid top-left deity panel and top-right photo */}
-      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px', padding: `${bodyTop}px ${bodyLeft}px ${PAGE.height - bodyBottom}px` }}>
+      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px', padding: `${bodyTop}px ${bodyLeft}px ${A4.h - bodyBottom}px` }}>
         {/* Left column — sections that don't overlap the photo slot horizontally */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <header style={{ textAlign: 'center', marginBottom: 4 }}>
