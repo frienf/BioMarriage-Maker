@@ -9,7 +9,7 @@ import type { Motif } from './motifs.ts';
  * templates and 6 files.
  */
 
-export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 'artwork';
+export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 'artwork' | 't1' | 't2' | 't3' | 't4';
 
 export type Collection = 'traditional' | 'devotional' | 'modern' | 'minimal' | 'premium' | 'hindi' | 'marathi';
 
@@ -66,7 +66,11 @@ export const SWATCHES: Record<LayoutKind, Swatch[]> = {
   ],
   devotional: [],
   chitra: [],
-  artwork: []
+  artwork: [],
+  t1: [{ hex: '#7B1E2B', label: 'Maroon (TODO)' }],
+  t2: [{ hex: '#145250', label: 'Teal green (TODO)' }],
+  t3: [{ hex: '#6B3A1E', label: 'Golden brown (TODO)' }],
+  t4: [{ hex: '#5A3A2B', label: 'Stone brown (TODO)' }],
 };
 
 const ALL: DocLocale[] = ['en', 'hi', 'mr'];
@@ -165,6 +169,12 @@ export const TEMPLATES: TemplateDef[] = [
     blurb: 'Laid out for Hindi from the start, with a jhalar strip across the head of the page.' },
   { slug: 'marathi-paramparik', title: 'मराठी पारंपरिक', collection: 'marathi', layout: 'paramparik', accent: '#8A2A1C', pricePaise: PRICE.standard, docLocales: ['mr'], pages: 1,
     blurb: 'Laid out for Marathi from the start, with Devanagari numerals throughout.' },
+
+  // Rebuilt designs (code-based, full-page decorative art + measured photo/content)
+  { slug: 't1-lakshmi-elephants', title: 'Lakshmi Elephants', collection: 'traditional', layout: 't1', accent: '#7A3B1C', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_146c7743 (full decorative background + circle photo). Art must be regenerated at A4 ratio.' },
+  { slug: 't2-green-lotus', title: 'Green Lotus', collection: 'traditional', layout: 't2', accent: '#145250', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_404a553f (full decorative background + circle photo + left lotus strip).' },
+  { slug: 't3-murugan-vel', title: 'Murugan Vel', collection: 'devotional', layout: 't3', accent: '#8A5A30', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_9372ce8f (full decorative parchment + rect photo + peacock feather border). Art must be regenerated at A4 ratio.' },
+  { slug: 't4-stone-arch', title: 'Stone Arch', collection: 'premium', layout: 't4', accent: '#5A3A2B', pricePaise: PRICE.premium, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_30039c0 (carved stone decorative border + arched photo + deity niche).' },
 
   // Artwork (image-based) templates
   { slug: 'lakshmi-elephants-01', title: 'Lakshmi Elephants', collection: 'traditional', layout: 'artwork', manifestId: 'lakshmi-elephants-01', accent: '#7B1E2B', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Image-based artwork from Design Template.' },

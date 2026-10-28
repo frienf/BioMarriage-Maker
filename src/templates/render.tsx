@@ -8,6 +8,10 @@ import { MayurTemplate } from './mayur';
 import { ParamparikTemplate } from './paramparik';
 import { ChitraTemplate } from './chitra';
 import { ArtworkTemplate } from './artwork';
+import { T1Template } from './t1-lakshmi-elephants';
+import { T2Template } from './t2-green-lotus';
+import { T3Template } from './t3-murugan-vel';
+import { T4Template } from './t4-stone-arch';
 import type { Manifest } from './schema';
 
 /** A4 in CSS pixels at 96dpi. Matches --a4-w / --a4-h. */
@@ -51,6 +55,14 @@ export function TemplateSheet({
       return <ParamparikTemplate data={data} accent={ink} instanceId={instanceId} />;
     case 'chitra':
       return <ChitraTemplate data={data} slug={def.slug} frameSrc={frameSrc} />;
+    case 't1':
+      return <T1Template data={data} accent={ink} />;
+    case 't2':
+      return <T2Template data={data} accent={ink} />;
+    case 't3':
+      return <T3Template data={data} accent={ink} />;
+    case 't4':
+      return <T4Template data={data} accent={ink} />;
     case 'artwork':
       return <ArtworkTemplate data={data} manifestId={def.manifestId!} manifest={manifest} accent={ink} />;
   }
