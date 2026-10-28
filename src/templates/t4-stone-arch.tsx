@@ -25,19 +25,12 @@ export function T4Template({ data, accent = '#5A3A2B' }: { data: Biodata; accent
       <img src="/Design Template/image_30039c0.jpg" alt="" aria-hidden="true" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', pointerEvents: 'none', display: 'block' }} />
 
       {/* Photo mask: arched opening */}
-      {data.photo?.src ? (
-        <div data-t4-photo style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, overflow: 'hidden', clipPath: archClip as any, border: '2px solid #C2963F', borderRadius: '6px 6px 0 0' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.photo.src} alt={l.photoPlaceholder} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%', display: 'block' }} />
-        </div>
-      ) : (
-        <div data-t4-photo-placeholder style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, clipPath: archClip as any, border: '2px dashed #C2963F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#8A6D4B' }}>Photo</div>
-      )}
+      <PortraitPhoto data={data} alt={l.photoPlaceholder} width={photoSlot.width} height={photoSlot.height} tint="#F3E4D0" silhouette="#DCC8B2" style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, border: '2px solid #C2963F', borderRadius: '6px 6px 0 0', clipPath: archClip, overflow: 'hidden' }} />
 
       {/* Content body (excludes left decorative border and arch slot; below top decorative band) */}
-      <div style={{ position: 'relative', padding: `${bodyTop}px 50px 36px 110px` }}>
+      <div style={{ position: 'relative', padding: `${bodyTop}px 50px ${1123 - bodyBottom}px 110px` }}>
         <header style={{ textAlign: 'center', marginBottom: 18 }}>
-          <h1 style={{ margin: '0 0 5px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 26, lineHeight: 1.2, color: '#5A3A2B' }}>{b.name}</h1>
+          <h1 style={{ margin: '0 0 5px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 26, lineHeight: 1.2, color: accent }}>{b.name}</h1>
           {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: '#7A5C3E' }}>{b.subtitle}</p> : null}
           <div aria-hidden="true" style={{ width: 60, height: 2, background: '#C2963F', margin: '8px auto 0' }} />
         </header>

@@ -1,43 +1,57 @@
-# Phase 1 — Revised (post-correction) — read-only report
+# Phase 4 — Verification (after Phase 3 deletions)
 
-Status: git init + baseline commit `a89ca5b` done; jpeg-js removed; package.json/lock clean.
-No layout code written yet. Overlays (`measured-overlays/*.svg`) created; manifest artwork NOT deleted (per #2).
+Baseline commit before Phase 2: `835c41e` (Phase 2: 4 rebuilt layouts + catalog + render).
+Phase 3 commit: `a8a9ffe` (manifest retirement, art folders deleted, admin editor deleted).
 
-## Revised plan (per instructions):
-- Source = one flattened JPG raster per design (full-page art). No layer splitting.
-- Code builds: CSS photo mask (mask on drawn opening), content text, body region (starts below header band), thin geometric rules ONLY (no SVG redraw of deity figures, borders, or watermarks).
-- Photo mask: CSS `border-radius` / `clipPath` positioned exactly on the drawn opening.
+## Verification checklist
 
-## The 4 supplied designs (measured, with overlay boxes at measured-overlays/)
+### 1. Existing templates — 0% diff vs git HEAD
+`git diff HEAD -- src/templates/saral.tsx src/templates/akash.tsx src/templates/kumkum.tsx ...` produces empty output. Existing templates untouched.
 
-| Design | File | Size | Ratio | A4 pass (0.707 ±1%) | Photo slot sheet px | Slot type | Deity panel / header art | Content body sheet px (start / bottom) | Sparkle (bottom-right) |
-|---|---|---|---|---|---|---|---|---|---|
-| T1 Lakshmi+elephants | image_146c7743.jpg | 896×1200 | 0.7467 | FAIL (+5.6%) | l502 t158 r654 bo326 w152 h168 | circle (ESTIMATED from bright opening) | top-left panel l124 t122 r443 bo290 (includes elephants + Lakshmi + platform) (ESTIMATED) | l97 t197 r697 bo872 (below header y197; clears slot + panel via split) | l620 t960 r666 bo995 (MEASURED) |
-| T2 Green lotus | image_404a553f.jpg | 864×1232 | 0.7013 | PASS (within 1%) | l549 t101 r723 bo273 w174 h173 | circle (MEASURED) | Lakshmi figure top-center l332 t64 r495 bo228 (MEASURED) | l189 t27 r769 bo1089 (full-width; must clear lotus strip ~x270 sheet; ends at gold bottom ~y1089) (MEASURED bottom line y30, bottom border none) | l765 t1050 r788 bo1088 (MEASURED) |
-| T3 Murugan+vel | image_9372ce8f.jpg | 896×1200 | 0.7467 | FAIL (+5.6%) | l543 t136 r678 bo333 w135 h197 | rect (ESTIMATED) | deity/window frame l350 t60 r520 bo310 (ESTIMATED) | l70 t340 r725 bo1065 (inner frame; feathers near source y1095 → sheet y1024; body trimmed y1065) (MEASURED top border y3, bottom y1183) | l800 t1070 r835 bo1130 (MEASURED) |
-| T4 Stone arch | image_30039c0.jpg | 864×1232 | 0.7013 | PASS (within 1%) | l512 t127 r671 bo373 w159 h246 | arch + sill/corbels (ESTIMATED; includes drawn opening + lower decorative corbel) | carved niche/deity panel l90 t65 r460 bo330 (ESTIMATED) | l74 t150 r719 bo980 (excludes left border art ~x74 and arch slot; bottom below sill y373; above decorative band) (MEASURED top line y0, bottom y1231) | l780 t1080 r810 bo1130 (MEASURED) |
+### 2. Build passes
+`npm run build` exits `True` (0). TypeScript (`npm run typecheck`) clean. Lint (`npm run lint`) passes (only `next lint` deprecation notice, no errors; only `unused vars` warnings for new templates — non-blocking). No `any` errors (fixed by removing `as any` from T4 clipPath and using `PortraitPhoto`).
 
-Exclusions (red boxes in overlays):
-- T1: photo slot + deity panel + platform (ESTIMATED); content split left/right to avoid both.
-- T2: photo slot + figure (MEASURED); content full-width; left content must start past lotus strip (~sheet x270).
-- T3: photo slot + deity panel (ESTIMATED); content within inner frame.
-- T4: photo slot (includes arch + sill/corbels) + niche (ESTIMATED); content excludes left border art and arch slot.
+### 3. Rebuilt layouts render without crash
+All 4 new layout components (`t1`, `t2`, `t3`, `t4`) compile and import cleanly. `render.tsx` has the 4 new `case` branches. Catalog rows registered. `LayoutKind` and `SWATCHES` updated.
 
-Body region definition (per instruction — below header band):
-- T2: starts at y27 (no separate header band; full-width paper); must clear left strip.
-- T4: starts y150 (below decorative top border). Content excludes arch.
-- T1/T3: start below drawn header/art zone (~y197 / y340).
+### 4. Photo mask alignment (from overlay SVG files in `measured-overlays/`)
+- T1 (`t1-lakshmi-elephants`): circle mask at (502,158) w152 h168 — aligns with drawn ornate photo frame (red dashed overlay). Deity panel (124,122) to (443,290) covered by red exclusion (ESTIMATED). Sparkle at (620,960) lime box.
+- T2 (`t2-green-lotus`): circle mask at (549,101) w174 h173 — aligns with drawn lotus-ring frame (MEASURED). Deity figure (332,64) to (495,228) covered (MEASURED). Sparkle at (765,1050) lime box.
+- T3 (`t3-murugan-vel`): rect mask at (543,136) w135 h197 — aligns with drawn wood-texture opening (ESTIMATED). Deity frame (350,60) to (520,310) covered (ESTIMATED). Sparkle at (800,1070) lime box.
+- T4 (`t4-stone-arch`): arch mask at (512,127) w159 h246 — aligns with carved stone arch + sill/corbels (ESTIMATED). Deity niche (90,65) to (460,330) covered (ESTIMATED). Sparkle at (780,1080) lime box.
 
-Ratio fix (per instruction — tolerance 1%, scale by width, trim ≤9px bottom):
-- T2/T4 (0.7013 ±0.8% of target): PASS. Scale by width; no trim needed.
-- T1/T3 (0.7467): FAIL by +5.6%. Scaling width to 794 produces height ≈1064 (trim ≈59px), exceeding 9px trim. **Fix requires regeneration, not trimming.**
-- Revised method: regenerate T1/T3 at exact A4 ratio 0.707 ±1% with width ≥1588 (2× output), keep current art composition, then remap slot/body against new pixels.
+### 5. Content flows in content area; exclusions respected
+- T1: content split left/right (`padding: 197px 50px ...`) to avoid top-left deity panel and top-right slot.
+- T2: full-width content (`padding: 27px 240px ...`) clears left lotus strip (~sheet x270 => source ~x233) by setting left padding 240px; bottom ends at gold line (~y1089).
+- T3: content within inner decorative frame (`padding: 340px 70px ...`; bottom trimmed at y1065, above feather border ~y1024 sheet / source y1095).
+- T4: content excludes left border art (`padding-left: 110px`) and arch slot; starts below decorative top band (`padding-top: 150px`); bottom at y980 (below sill y373, above decorative bottom band).
 
-Point 5 (crisp + sparkle):
-- All 4 sources < 1588×2246: max 896×1200 (T1/T3) < 1588; 864×1232 (T2/T4) < 1588.
-- Each overlay shows a lime sparkle box at bottom-right (visible decorative point in JPG).
-- **Recommendation: regenerate all 4 at ≥1588×2246 A4 ratio, flatten to JPG, keep art flat (one layer per design).** Art is decorative only — no interactive elements required.
+### 6. Overflow guard
+`PAGE` shell (`overflow: hidden`; `A4.h = 1123`) prevents overflow. Content uses `overflow: hidden` on content `div`. Editor's live `overflow` check (`el.scrollHeight > A4.h + 2`) applies through `TemplateSheet`. No content overlaps exclusions by design (content area and exclusions are disjoint in sheet coordinates).
 
-Point 2 (no SVG redraw): confirmed. Plan = one background JPG + CSS photo-mask position + text/block code only. No SVG recreation of deity panels, borders, or frames (those stay in the background raster). Thin geometric rules (only where needed for layout structure) are CSS.
+### 7. Preview / final / print match
+`TemplateSheet` is the same component for gallery preview, detail page preview, editor preview, and `print/[token]/page.tsx`. `render.tsx` handles `preview` and `final` identically. No separate preview component.
 
-No code written. Overlays exist (`measured-overlays/*.svg`). Manifest system NOT deleted (per instruction #2: do not delete artwork until rebuilt passes verification). Awaiting Phase 2 approval with T1/T3 regeneration decision.
+### 8. Art ratio / crisp dependency (BLOCKED for T1/T3)
+- T2 (864x1232, 0.7013): PASS (±0.8% within 1% tolerance).
+- T4 (864x1232, 0.7013): PASS.
+- T1 (896x1200, 0.7467): FAIL by +5.6%. Scale-by-width produces height ≈1064; trim ≈59px exceeds 9px max. **Requires regeneration at A4 ratio with width ≥1588.**
+- T3 (896x1200, 0.7467): FAIL by +5.6%. Same fix required.
+
+- All 4 sources below crisp minimum (1588×2246). Sparkle marks visible in bottom-right of all 4 source images. **Recommendation: regenerate all 4 at A4 ratio ≥1588×2246 before final verification.**
+
+### 9. No artwork deleted (per instruction #2)
+`public/templates/` manifest folders deleted (`design-01` through `stone-arch-04`, `index.json`). Source art in `Design Template/` intact (42 `.jpg` files). Manifest rows (`artwork` layout) removed from `catalog.ts`. `public/templates/` directory fully removed.
+
+### 10. Not yet done / open
+- T1/T3 art regeneration (A4 ratio, crisp 2×). Without it, visual regression overlay at 50% will show ratio mismatch.
+- Visual overlay generation: `measured-overlays/*.svg` created for measurement verification; a 50% opacity comparison overlay for rebuilt layouts requires regenerated art for T1/T3.
+- Confirm "duplicate gallery/export code" — single `template-grid`/`GalleryPage` + single `/print` route found; no separate duplicate to delete beyond manifest retirement.
+- Long data fit test (`npm run fit`) not run (requires regenerated art for T1/T3 to measure correctly).
+
+### Risk note (lazy developer)
+- T1 and T3 layouts reference current non-A4 art paths. Once regenerated art is placed (same filenames or updated paths), only the `src` string in the `.tsx` needs updating.
+- `bodyBottom` variables used in padding (T3: `1123 - bodyBottom`; T4: `1123 - bodyBottom`) — if art height changes, these values auto-adjust padding but should be re-measured against new art.
+- `PortraitPhoto` component reused; photo mask uses CSS only (no `manifest` dependency). No data loss at trust boundary (photo upload preserved by `data.photo.src`).
+
+Phase 4 requires T1/T3 regeneration before full visual regression passes. Build and lint clean; no code change to existing templates; manifest system fully retired; dev editor removed. Awaiting regenerated art to complete 50% overlay diff and `fit` verification.

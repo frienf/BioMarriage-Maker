@@ -24,26 +24,19 @@ export function T3Template({ data, accent = '#8A5A30' }: { data: Biodata; accent
       <img src="/Design Template/image_9372ce8f.jpg" alt="" aria-hidden="true" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', pointerEvents: 'none', display: 'block' }} />
 
       {/* Photo mask: rectangular opening (drawn wood-texture frame) */}
-      {data.photo?.src ? (
-        <div data-t3-photo style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, overflow: 'hidden', border: '2px solid #C2963F', boxShadow: 'inset 0 0 0 1px #F0E6CC' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.photo.src} alt={l.photoPlaceholder} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%', display: 'block' }} />
-        </div>
-      ) : (
-        <div data-t3-photo-placeholder style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, border: '2px dashed #C2963F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#8A6D4B' }}>Photo</div>
-      )}
+      <PortraitPhoto data={data} alt={l.photoPlaceholder} width={photoSlot.width} height={photoSlot.height} tint="#F3E4D0" silhouette="#DCC8B2" style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, border: '2px solid #C2963F', boxShadow: 'inset 0 0 0 1px #F0E6CC', overflow: 'hidden' }} />
 
       {/* Content within inner decorative frame (clear deity panel and photo) */}
-      <div style={{ position: 'relative', padding: `${bodyTop}px 70px 36px` }}>
+      <div style={{ position: 'relative', padding: `${bodyTop}px 70px ${1123 - bodyBottom}px` }}>
         <header style={{ textAlign: 'center', marginBottom: 16 }}>
-          <h1 style={{ margin: '0 0 5px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 26, lineHeight: 1.2, color: '#5A2A10' }}>{b.name}</h1>
-          {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: '#7A5C3E' }}>{b.subtitle}</p> : null}
+          <h1 style={{ margin: '0 0 5px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 26, lineHeight: 1.2, color: accent }}>{b.name}</h1>
+          {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: accent }}>{b.subtitle}</p> : null}
           <div aria-hidden="true" style={{ width: 80, height: 2, background: '#C2963F', margin: '8px auto 0' }} />
         </header>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 620, margin: '0 auto' }}>
           {b.personal.rows.length ? (
             <section>
-              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A2A10', borderBottom: '1px solid #D8B88A', paddingBottom: 3 }}>{b.personal.title}</h2>
+              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: accent, borderBottom: `1px solid ${accent}`, paddingBottom: 3 }}>{b.personal.title}</h2>
               <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: '130px minmax(0,1fr)', gap: '2px 14px', fontSize: 13 }}>
                 {b.personal.rows.map((r, i) => (
                   <div key={i} style={{ display: 'grid', gridTemplateColumns: 'subgrid', gridColumn: '1 / -1' }}>

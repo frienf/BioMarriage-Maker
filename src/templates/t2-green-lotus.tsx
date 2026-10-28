@@ -21,20 +21,13 @@ export function T2Template({ data, accent = '#145250' }: { data: Biodata; accent
       <img src="/Design Template/image_404a553f.jpg" alt="" aria-hidden="true" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', pointerEvents: 'none', display: 'block' }} />
 
       {/* Photo mask: circle opening at drawn frame */}
-      {data.photo?.src ? (
-        <div data-t2-photo style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, overflow: 'hidden', borderRadius: '50%', border: '3px solid #C5A561', boxShadow: 'inset 0 0 0 2px #F5F0E4' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.photo.src} alt={l.photoPlaceholder} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%', display: 'block' }} />
-        </div>
-      ) : (
-        <div data-t2-photo-placeholder style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, width: photoSlot.width, height: photoSlot.height, borderRadius: '50%', border: '2px dashed #C5A561', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#8A7A5B' }}>Photo</div>
-      )}
+      <PortraitPhoto data={data} alt={l.photoPlaceholder} width={photoSlot.width} height={photoSlot.height} tint="#F1E6D8" silhouette="#DCC8B2" style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, borderRadius: '50%', border: `2px solid ${accent}` }} />
 
       {/* Deity figure exclusion zone (top-center) — content avoids this horizontally; content starts lower vertically */}
       {/* Content area: full-width from y27; left content must stay right of lotus strip (~x270 sheet => min content left x230) */}
       <div style={{ position: 'relative', padding: '36px 50px 36px 240px' }}>
         <header style={{ textAlign: 'center', marginBottom: 16 }}>
-          <h1 style={{ margin: '0 0 4px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 28, lineHeight: 1.15, color: '#145250' }}>{b.name}</h1>
+          <h1 style={{ margin: '0 0 4px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 28, lineHeight: 1.15, color: accent }}>{b.name}</h1>
           {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: '#5A7868' }}>{b.subtitle}</p> : null}
         </header>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>

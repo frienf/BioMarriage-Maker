@@ -18,7 +18,7 @@ export function T1Template({ data, accent = '#7A3B1C' }: { data: Biodata; accent
   // Deity panel exclusion: top-left (124,122) to (443,290) — includes Lakshmi + elephants + platform
   // Content body: below header (~y197) to above bottom decorative band (~y872); split left/right to clear both exclusions
   const photoSlot = { left: 502, top: 158, width: 152, height: 168, shape: 'circle' as const };
-  const bodyLeft = 97, bodyTop = 197, bodyRight = 697, bodyBottom = 872;
+  const bodyLeft = 97, bodyTop = 197, bodyBottom = 872;
 
   return (
     <article lang={data.docLocale} style={{ ...PAGE, position: 'relative', overflow: 'hidden', background: '#EFE8D8', color: '#3A2418', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontSize: 14, lineHeight: 1.36 }}>
@@ -43,16 +43,11 @@ export function T1Template({ data, accent = '#7A3B1C' }: { data: Biodata; accent
             width: photoSlot.width,
             height: photoSlot.height,
             overflow: 'hidden',
-            borderRadius: photoSlot.shape === 'circle' ? '50%' : undefined,
-            boxShadow: 'inset 0 0 0 2px #C5A561', // faint gold inner ring matching drawn frame
+            borderRadius: '50%',
+            border: `2px solid ${accent}`,
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={data.photo.src}
-            alt={l.photoPlaceholder}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%', display: 'block' }}
-          />
+          <PortraitPhoto data={data} alt={l.photoPlaceholder} width={photoSlot.width} height={photoSlot.height} tint="#F3E4D0" silhouette="#DCC8B2" style={{ borderRadius: '50%' }} />
         </div>
       ) : (
         <div

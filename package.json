@@ -19,9 +19,6 @@
     "brand": "node --experimental-strip-types scripts/brand-check.ts",
     "thumbs": "node --experimental-strip-types scripts/template-thumbs.ts",
     "gen:images": "node scripts/gen-template-images.mjs",
-    "gen:index": "node --experimental-strip-types scripts/generate-index.ts",
-    "validate:templates": "node --experimental-strip-types scripts/validate-templates.ts",
-    "prebuild": "node --experimental-strip-types scripts/generate-index.ts && node --experimental-strip-types scripts/validate-templates.ts",
     "frames": "node --experimental-strip-types scripts/prepare-frames.ts",
     "frames:check": "node --experimental-strip-types scripts/frame-check.ts"
   },
