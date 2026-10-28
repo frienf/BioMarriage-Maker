@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biodata Maker — logo reveal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* Brand tokens, the same values the site uses. */
+  :root {
+    --teal-800: #0e3b3a;
+    --gold: #a47a35;
+    --leaf: #2f6b3f;
+    --leaf-dark: #255633;
+    --marigold: #f0a030;
+    --marigold-deep: #b86e10;
+    --paper: #fffdf8;
+  }
+
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    background: var(--paper);
+    font-family: 'Eczar', Georgia, serif;
+  }
+
+  /* Clearspace: the mark keeps a clear margin of half the cord's width all
+     round, and nothing animates into that margin from outside. */
+  #logo { width: min(560px, 86vw); height: auto; overflow: visible; }
+
+  /* --- One technique: stroke draw-on. ----------------------------------
+     Every piece draws its own outline, then its fill settles in behind it.
+     pathLength="1" normalises each path, so one dasharray value works for a
+     long cord and a small marigold alike. No piece moves from its final
+     position: brand geometry is never translated, skewed or squashed. */
+
+  #logo [data-draw] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+    opacity: 0;
+    animation:
+      appear 0s linear var(--at, 0s) forwards,
+      draw var(--draw, 0.55s) cubic-bezier(.65, 0, .35, 1) var(--at, 0s) forwards,
+      fillin 0.34s ease-out calc(var(--at, 0s) + var(--draw, 0.55s) * 0.72) forwards;
+  }
+
+  /* The cord is a line, so it draws but never fills. */
+  #logo #cord { animation-name: appear, draw; }
+
+  @keyframes appear { to { opacity: 1; } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fillin { to { fill-opacity: 1; } }
+
+  /* The wordmark lands last, so the eye finishes on the name. */
+  #wordmark {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: wordmark 0.42s cubic-bezier(.22, 1, .36, 1) 1.05s forwards;
+  }
+  @keyframes wordmark { to { opacity: 1; transform: translateY(0); } }
+
+  /* A 4% overshoot and settle, the only scale in the piece. */
+  #mark { transform-origin: 50% 46%; animation: settle 0.22s cubic-bezier(.34, 1.3, .64, 1) 1.24s both; }
+  @keyframes settle { from { transform: scale(1.04); } to { transform: scale(1); } }
+
+  /* Reduced motion: the finished mark, immediately, with no movement. */
+  @media (prefers-reduced-motion: reduce) {
+    #logo [data-draw], #logo #cord, #wordmark, #mark { animation: none !important; }
+    #logo [data-draw] { stroke-dashoffset: 0; fill-opacity: 1; opacity: 1; }
+    #wordmark { opacity: 1; transform: none; }
+    #mark { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg id="logo" viewBox="0 0 420 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Biodata Maker">
+  <g id="mark">
+    <!-- The cord everything hangs from, drawn first. -->
+    <path id="cord" data-draw
+          d="M 40 34 Q 210 78 380 34"
+          fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round"
+          pathLength="1" style="--at: 0s; --draw: 0.6s" />
+
+    <!-- Three mango leaves, drawn outward from the centre. -->
+    <path data-draw d="M 0 0 C -14 16, -10 44, 0 58 C 10 44, 14 16, 0 0 Z"
+          transform="translate(210 54)"
+          fill="var(--leaf)" stroke="var(--leaf-dark)" stroke-width="2.5" stroke-linejoin="round"
+          pathLength="1" style="--at: 0.30s" />
+    <path data-draw d="M 0 0 C -13 15, -9 41, 0 54 C 9 41, 13 15, 0 0 Z"
+          transform="translate(130 50)"
+          fill="var(--leaf)" stroke="var(--leaf-dark)" stroke-width="2.5" stroke-linejoin="round"
+          pathLength="1" style="--at: 0.38s" />
+    <path data-draw d="M 0 0 C -13 15, -9 41, 0 54 C 9 41, 13 15, 0 0 Z"
+          transform="translate(290 50)"
+          fill="var(--leaf)" stroke="var(--leaf-dark)" stroke-width="2.5" stroke-linejoin="round"
+          pathLength="1" style="--at: 0.38s" />
+
+    <!-- Two marigolds in the gaps, last of the mark. -->
+    <circle data-draw cx="170" cy="62" r="17"
+            fill="var(--marigold)" stroke="var(--marigold-deep)" stroke-width="2.5"
+            pathLength="1" style="--at: 0.62s; --draw: 0.42s" />
+    <circle data-draw cx="250" cy="62" r="17"
+            fill="var(--marigold)" stroke="var(--marigold-deep)" stroke-width="2.5"
+            pathLength="1" style="--at: 0.70s; --draw: 0.42s" />
+    <circle data-draw cx="170" cy="62" r="6"
+            fill="var(--marigold-deep)" stroke="var(--marigold-deep)" stroke-width="1.5"
+            pathLength="1" style="--at: 0.86s; --draw: 0.26s" />
+    <circle data-draw cx="250" cy="62" r="6"
+            fill="var(--marigold-deep)" stroke="var(--marigold-deep)" stroke-width="1.5"
+            pathLength="1" style="--at: 0.94s; --draw: 0.26s" />
+  </g>
+
+  <text id="wordmark" x="210" y="160" text-anchor="middle"
+        font-family="Eczar, Georgia, serif" font-weight="600" font-size="38"
+        letter-spacing="-0.4" fill="var(--teal-800)">Biodata Maker</text>
+</svg>
+
+<script>
+  /**
+   * Freeze harness: ?t=N pins the reveal at N seconds for a deterministic
+   * screenshot.
+   *
+   * Each piece carries its own authored delay, so a frame cannot be pinned by
+   * overwriting every delay with -N: that would discard the stagger and show
+   * all pieces at the same point of their own draw. The authored delay is read
+   * first and the seek is applied relative to it.
+   */
+  (function () {
+    const raw = new URLSearchParams(location.search).get('t');
+    if (raw === null) { window.__ready = true; return; }
+    const T = parseFloat(raw);
+
+    document.querySelectorAll('#logo *').forEach((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.animationName === 'none') return;
+      const own = cs.animationDelay.split(',').map((d) => parseFloat(d) * (d.includes('ms') ? 0.001 : 1));
+      el.style.animationDelay = own.map((d) => (d - T) + 's').join(', ');
+      el.style.animationPlayState = 'paused';
+    });
+
+    window.__ready = true;
+  })();
+</script>
+</body>
+</html>

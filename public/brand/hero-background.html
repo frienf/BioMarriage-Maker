@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biodata Maker — hero motion background</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@600&family=Mukta:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-900: #0a2c2b;
+    --teal-800: #0e3b3a;
+    --teal-050: #d5e3e0;
+    --marigold: #f0a030;
+    --gold: #c9a24a;
+    --leaf: #3f7f4e;
+    --ink: #1c1b1a;
+    --loop: 24s;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--teal-800);
+    color: #fff;
+    font-family: 'Mukta', system-ui, sans-serif;
+  }
+
+  /* --- The background ---------------------------------------------------
+     Four soft colour fields over the teal ground, drifting slowly past each
+     other. CSS because a gradient is all this needs: no WebGL context, no
+     canvas, no rAF loop, nothing to pause when the tab hides.
+
+     The loop is seamless because the 0% and 100% keyframes are identical, so
+     the 24s period wraps with no jump. */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(42% 52% at 18% 28%, rgba(240, 160, 48, 0.26), transparent 62%),
+      radial-gradient(46% 54% at 82% 22%, rgba(201, 162, 74, 0.22), transparent 62%),
+      radial-gradient(50% 58% at 62% 82%, rgba(63, 127, 78, 0.24), transparent 64%),
+      radial-gradient(60% 65% at 30% 90%, rgba(10, 44, 43, 0.55), transparent 70%),
+      var(--teal-800);
+    background-size: 190% 190%, 190% 190%, 200% 200%, 210% 210%, auto;
+    background-repeat: no-repeat;
+    animation: drift var(--loop) ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%, 0 0; }
+    33%      { background-position: 26% 18%, 74% 30%, 62% 72%, 18% 84%, 0 0; }
+    66%      { background-position: 12% 34%, 88% 12%, 38% 88%, 34% 92%, 0 0; }
+  }
+
+  /* A scrim behind the copy. The colour fields are kept low-contrast enough
+     that this is belt-and-braces, but a headline over a drifting marigold
+     field is exactly where readability quietly goes wrong. */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, rgba(14, 59, 58, 0.72) 0%, rgba(14, 59, 58, 0.34) 48%, rgba(14, 59, 58, 0) 78%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg { animation: none; }
+  }
+
+  /* --- Sample foreground, so contrast can be judged against real copy --- */
+  main { min-height: 100%; display: grid; align-content: center; padding: 8vmin 7vmin; max-width: 56rem; }
+  h1 {
+    margin: 0 0 1.1rem;
+    font-family: 'Eczar', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.2rem, 6vw, 3.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.5px;
+    text-wrap: balance;
+  }
+  p { margin: 0 0 2rem; font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.55; color: var(--teal-050); max-width: 34em; }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .btn {
+    display: inline-flex; align-items: center; min-height: 52px; padding-inline: 28px;
+    border-radius: 8px; font-weight: 600; font-size: 1.125rem; text-decoration: none;
+  }
+  .accent { background: var(--marigold); color: var(--ink); }
+  .ghost { border: 1.5px solid #8fb3ae; color: #fff; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="scrim"></div>
+
+<main>
+  <h1>A biodata your family will be proud to share</h1>
+  <p>Choose a template, fill in your details at your own pace and download a print-ready PDF in English, हिन्दी or मराठी. No account needed.</p>
+  <div class="row">
+    <a class="btn accent" href="#">Create your biodata</a>
+    <a class="btn ghost" href="#">Try it with sample details</a>
+  </div>
+</main>
+
+<script>
+  /**
+   * Freeze harness: ?t=N pins the drift at N seconds.
+   *
+   * One element, one animation, so seeking is just a negative delay. t=0 and
+   * t=24 must come out pixel-identical, which is what proves the loop has no
+   * seam.
+   */
+  (function () {
+    const raw = new URLSearchParams(location.search).get('t');
+    if (raw !== null) {
+      const T = parseFloat(raw);
+      document.querySelectorAll('.bg').forEach((el) => {
+        el.style.animationDelay = -T + 's';
+        el.style.animationPlayState = 'paused';
+      });
+    }
+    window.__ready = true;
+  })();
+</script>
+</body>
+</html>

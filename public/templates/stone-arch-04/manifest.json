@@ -1,0 +1,10 @@
+{
+  "id": "stone-arch-04",
+  "version": 1,
+  "canvas": { "ratio": [1, 1.414] },
+  "photoSlot": { "shape": "arch", "box": { "x": 0.61, "y": 0.08, "w": 0.28, "h": 0.30 }, "path": null, "radius": null, "inset": 0.012 },
+  "contentArea": { "x": 0.10, "y": 0.40, "w": 0.80, "h": 0.52 },
+  "exclusions": [ { "x": 0.60, "y": 0.30, "w": 0.30, "h": 0.10 } ],
+  "theme": { "text": "#1c1b1a", "heading": "#5a3e2b", "divider": "#a47a35", "fontHeading": "serif", "fontBody": "sans-serif", "baseSize": 12 },
+  "layoutHint": "two-column"
+}

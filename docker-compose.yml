@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: biodata
+      POSTGRES_PASSWORD: biodata
+      POSTGRES_DB: biodata
+    ports:
+      - '5432:5432'
+    volumes:
+      - biodata-pg:/var/lib/postgresql/data
+volumes:
+  biodata-pg:

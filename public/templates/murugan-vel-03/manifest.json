@@ -1,0 +1,10 @@
+{
+  "id": "murugan-vel-03",
+  "version": 1,
+  "canvas": { "ratio": [3, 4] },
+  "photoSlot": { "shape": "rounded-rect", "box": { "x": 0.65, "y": 0.09, "w": 0.24, "h": 0.20 }, "path": null, "radius": 0.01, "inset": 0.012 },
+  "contentArea": { "x": 0.10, "y": 0.32, "w": 0.80, "h": 0.60 },
+  "exclusions": [],
+  "theme": { "text": "#1c1b1a", "heading": "#800020", "divider": "#a47a35", "fontHeading": "serif", "fontBody": "sans-serif", "baseSize": 12 },
+  "layoutHint": "two-column"
+}

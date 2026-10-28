@@ -1,0 +1,36 @@
+/* Print geometry. The sheet is already exactly A4 in CSS pixels, so the page
+   box matches it and the margin is zero: the border each template draws is its
+   own, 5.3mm in from the paper edge, which is inside what home printers reach. */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+}
+
+.print-sheet {
+  width: var(--a4-w);
+  height: var(--a4-h);
+  overflow: hidden;
+}
+
+/* Each sheet after the first starts a new piece of paper. Breaking before,
+   not after: Next appends its scripts to <body> after the last sheet, so a
+   :last-child reset never matched and every PDF gained a blank page. */
+.print-sheet + .print-sheet {
+  break-before: page;
+  page-break-before: always;
+}
+
+/* Backgrounds and watermarks are the design, not decoration a printer may
+   decide to drop. */
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}

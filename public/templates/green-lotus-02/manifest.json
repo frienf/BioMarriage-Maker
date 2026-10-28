@@ -1,0 +1,10 @@
+{
+  "id": "green-lotus-02",
+  "version": 1,
+  "canvas": { "ratio": [1, 1.414] },
+  "photoSlot": { "shape": "circle", "box": { "x": 0.64, "y": 0.07, "w": 0.24, "h": 0.17 }, "path": null, "radius": null, "inset": 0.012 },
+  "contentArea": { "x": 0.33, "y": 0.30, "w": 0.62, "h": 0.63 },
+  "exclusions": [],
+  "theme": { "text": "#1c1b1a", "heading": "#145250", "divider": "#2f6b3f", "fontHeading": "serif", "fontBody": "sans-serif", "baseSize": 12 },
+  "layoutHint": "one-column"
+}

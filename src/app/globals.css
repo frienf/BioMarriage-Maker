@@ -1,0 +1,810 @@
+/* ---------------------------------------------------------------------------
+   Biodata Maker design system - "Toran"
+   Every value here is lifted from the design canvas
+   (Biodata Maker - Pages and Templates). Change a token, not a page.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Ground: peacock teal */
+  --teal-900: #0a2c2b;
+  --teal-800: #0e3b3a;
+  --teal-700: #145250;
+  --teal-600: #2f5e5b;
+  --teal-500: #23504d;
+  --teal-300: #8fb3ae;
+  --teal-100: #e3efec;
+  --teal-050: #d5e3e0;
+  --teal-note: #3e5a57;
+
+  /* Accents: marigold, gold, mango leaf */
+  --marigold: #f0a030;
+  --marigold-deep: #b86e10;
+  --gold: #a47a35;
+  --gold-on-dark: #c9a24a;
+  --leaf: #2f6b3f;
+  --leaf-on-dark: #5e9c6b;
+  --toran-leaf: #3f7f4e;
+  --toran-stem: #2c5e39;
+
+  /* Ink and lines */
+  --ink: #1c1b1a;
+  --ink-soft: #3b3833;
+  --muted: #55524c;
+  --muted-on-dark: #b7ccc8;
+  --line: #d9ddd6;
+  --line-soft: #ecefea;
+  --field-line: #9aa39a;
+  --chip-line: #b9bfb6;
+
+  /* Surfaces */
+  --paper: #ffffff;
+  --canvas: #f2f4f1;
+
+  /* State */
+  --danger: #b42318;
+  --danger-tint: #fdf2f1;
+
+  /* Type */
+  --font-display: var(--font-eczar), Georgia, serif;
+  --font-body: var(--font-mukta), "Noto Sans Devanagari", system-ui, sans-serif;
+
+  --text-hero: 60px;
+  --text-h1: 48px;
+  --text-h1-lg: 52px;
+  --text-h2: 40px;
+  --text-h2-sm: 32px;
+  --text-h3: 22px;
+  --text-lg: 20px;
+  --text-body: 18px;
+  --text-sm: 16px;
+  --text-xs: 15px;
+  --text-2xs: 14px;
+
+  --leading-hero: 1.04;
+  --leading-head: 1.1;
+  --leading-body: 1.55;
+
+  /* Shape */
+  --r-control: 8px;
+  --r-note: 10px;
+  --r-card: 12px;
+  --r-panel: 16px;
+  --r-pill: 999px;
+
+  /* Rhythm */
+  --shell: 1200px;
+  --gutter: 32px;
+  --section: 96px;
+
+  /* Touch targets */
+  --tap: 44px;
+  --tap-md: 48px;
+  --tap-lg: 52px;
+
+  /* Depth */
+  --shadow-sheet: 0 2px 4px rgba(14, 59, 58, 0.08), 0 16px 40px rgba(14, 59, 58, 0.16);
+  --shadow-card: 0 18px 40px rgba(0, 20, 18, 0.45);
+
+  /* Motion. Mirrors src/lib/motion-tokens.ts, which is the source for the
+     JavaScript side; tests/motion-tokens.test.ts fails if the two drift. */
+  --motion-fast: 180ms;
+  --motion-normal: 280ms;
+  --motion-slow: 420ms;
+  --motion-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --hero-loop: 24s;
+
+  /* A4 at 96dpi - the single source of truth for every template. */
+  --a4-w: 794px;
+  --a4-h: 1123px;
+}
+
+/* No dark mode: the document being designed is printed on white paper, and a
+   dark chrome around a light A4 sheet misreads the preview. The dark band
+   variants below are a deliberate part of the look, not a theme. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: var(--teal-800);
+}
+
+a:hover {
+  color: var(--teal-700);
+}
+
+a,
+button,
+[role='button'],
+.chip,
+.btn {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid var(--marigold-deep);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1000;
+  padding: 12px 16px;
+  background: var(--teal-800);
+  color: #fff;
+  border-radius: var(--r-control);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  left: 16px;
+  top: 16px;
+}
+
+/* Layout */
+
+.shell {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.band {
+  padding-block: var(--section);
+}
+
+.band-canvas {
+  background: var(--canvas);
+}
+
+.band-dark {
+  background: var(--teal-800);
+  color: #fff;
+}
+
+.band-dark a {
+  color: #fff;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Type helpers */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--leading-head);
+  letter-spacing: -0.2px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-hero);
+  line-height: var(--leading-hero);
+  letter-spacing: -0.5px;
+  text-wrap: balance;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h1);
+  line-height: 1.08;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  line-height: var(--leading-head);
+}
+
+.lede {
+  color: var(--muted);
+  max-width: 40em;
+  text-wrap: pretty;
+}
+
+.band-dark .lede {
+  color: var(--teal-050);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: var(--text-sm);
+}
+
+.xsmall {
+  font-size: var(--text-xs);
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--tap-md);
+  padding-inline: 20px;
+  border: 0;
+  border-radius: var(--r-control);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--motion-smooth), color var(--motion-fast) var(--motion-smooth), transform var(--motion-fast) var(--motion-smooth), box-shadow var(--motion-fast) var(--motion-smooth);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-lg {
+  min-height: var(--tap-lg);
+  padding-inline: 28px;
+  font-size: var(--text-body);
+}
+
+.btn-primary {
+  background: var(--teal-800);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--teal-700);
+  color: #fff;
+}
+
+.btn-accent {
+  background: var(--marigold);
+  color: var(--ink);
+}
+
+.btn-accent:hover {
+  background: #e4912a;
+  color: var(--ink);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--field-line);
+  font-weight: 500;
+}
+
+.btn-outline-light {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid var(--teal-300);
+  font-weight: 500;
+}
+
+.btn-outline-brand {
+  background: var(--paper);
+  color: var(--teal-800);
+  border: 1.5px solid var(--teal-800);
+}
+
+/* Cards, panels, notes */
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: 28px;
+}
+
+.card-selected {
+  border: 2px solid var(--teal-800);
+}
+
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: 32px;
+}
+
+.note {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--r-note);
+  background: var(--teal-100);
+  color: var(--teal-800);
+  font-size: var(--text-sm);
+}
+
+.note-danger {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.note svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Chips and pills */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding-inline: 16px;
+  border: 1.5px solid var(--chip-line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.chip[aria-pressed="true"],
+.chip[data-on="true"] {
+  background: var(--teal-800);
+  border-color: var(--teal-800);
+  color: #fff;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: var(--teal-100);
+  color: var(--teal-800);
+  font-size: var(--text-xs);
+  line-height: 1.2;
+}
+
+/* Forms */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  font-size: var(--text-sm);
+}
+
+.field > input,
+.field > select,
+.field > textarea {
+  font: inherit;
+  font-weight: 400;
+  font-size: var(--text-body);
+  min-height: var(--tap-md);
+  padding: 10px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: var(--r-control);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.field > textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field > [aria-invalid="true"] {
+  border: 2px solid var(--danger);
+}
+
+.hint {
+  font-weight: 400;
+  font-size: var(--text-2xs);
+  color: var(--muted);
+}
+
+.error {
+  display: flex;
+  gap: 6px;
+  font-weight: 400;
+  font-size: var(--text-2xs);
+  color: var(--danger);
+}
+
+.error svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  font-weight: 500;
+  font-size: var(--text-sm);
+  margin-bottom: 8px;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap-md);
+  padding-inline: 16px;
+  border: 1px solid var(--field-line);
+  border-radius: var(--r-control);
+  font-size: var(--text-body);
+  cursor: pointer;
+}
+
+.radio-card:has(input:checked) {
+  border: 2px solid var(--teal-800);
+  background: var(--teal-100);
+}
+
+.radio-card input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--teal-800);
+}
+
+/* A4 sheet preview.
+   A sheet is always laid out at exactly A4 and then scaled, so the gallery
+   thumbnail, the editor preview and the PDF share one geometry and nothing
+   reflows between them. */
+
+.sheet-frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  flex: none;
+}
+
+.sheet-scale {
+  width: var(--a4-w);
+  height: var(--a4-h);
+  transform: scale(var(--sheet-scale, 1));
+  transform-origin: 0 0;
+}
+
+.sheet-shadow {
+  box-shadow: var(--shadow-sheet);
+}
+
+.sheet-watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sheet-watermark span {
+  transform: rotate(-32deg);
+  font-family: var(--font-display);
+  font-size: 88px;
+  font-weight: 700;
+  color: rgba(14, 59, 58, 0.09);
+  letter-spacing: 6px;
+}
+
+/* Grids */
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 40px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+  gap: 48px;
+}
+
+/* Tables */
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+}
+
+table.plain {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body);
+  min-width: 520px;
+}
+
+table.plain th {
+  text-align: left;
+  font-weight: 500;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+table.plain td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+table.plain tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Nav links */
+.nav-link {
+  transition: color var(--motion-fast) var(--motion-smooth), border-color var(--motion-fast) var(--motion-smooth);
+}
+
+.nav-link:hover {
+  color: var(--teal-700);
+}
+
+/* Template cards (homepage) */
+.template-card {
+  transition: transform var(--motion-normal) var(--motion-smooth), border-color var(--motion-normal) var(--motion-smooth), box-shadow var(--motion-normal) var(--motion-smooth);
+}
+
+.template-card:hover,
+.template-card:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--teal-800);
+  box-shadow: 0 12px 28px rgba(14, 59, 58, 0.12);
+}
+
+.template-card .btn {
+  transition: background-color var(--motion-fast) var(--motion-smooth), color var(--motion-fast) var(--motion-smooth);
+}
+
+/* Section headings decorative rule */
+.section-title {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 48px;
+  height: 2px;
+  background: var(--marigold-deep);
+  border-radius: 2px;
+  transition: width var(--motion-normal) var(--motion-smooth);
+}
+
+/* Small screens */
+
+@media (max-width: 1024px) {
+  :root {
+    --gutter: 24px;
+    --section: 72px;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --text-hero: 38px;
+    --text-h1: 32px;
+    --text-h1-lg: 34px;
+    --text-h2: 28px;
+    --text-h2-sm: 24px;
+    --gutter: 16px;
+    --section: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* A crossfading stack: every layer sits in the same grid cell and only its
+   opacity changes. Done in CSS rather than JS because the swap happens during
+   a React commit that re-reconciles a full A4 sheet; a compositor-driven
+   transition keeps fading through that, where a frame-loop tween would be
+   eaten by it and land as a cut. The reduced-motion block above already
+   shortens this to nothing. */
+.crossfade {
+  display: grid;
+  max-width: 100%;
+}
+
+.crossfade > * {
+  grid-area: 1 / 1;
+  transition: opacity var(--motion-fast) ease;
+}
+
+.crossfade > [aria-hidden='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- Hero ambience -------------------------------------------------------
+   Four soft colour fields drifting over the teal ground on a 24 second loop.
+
+   CSS rather than a canvas or a shader: a gradient is all this needs, so there
+   is no WebGL context to lose, no animation frame loop to pause when the tab
+   hides, and no devicePixelRatio to cap. The 0% and 100% keyframes are
+   identical, so the loop closes with no seam.
+
+   Verified by `npm run brand`, which measures the seam, the amount of drift
+   and the worst-case contrast of white copy over it. */
+
+.hero {
+  position: relative;
+  /* Its own stacking context, so the layers below sit behind the hero's
+     content without escaping behind the page. */
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hero-bg,
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-bg {
+  background:
+    radial-gradient(42% 52% at 18% 28%, rgba(240, 160, 48, 0.26), transparent 62%),
+    radial-gradient(46% 54% at 82% 22%, rgba(201, 162, 74, 0.22), transparent 62%),
+    radial-gradient(50% 58% at 62% 82%, rgba(63, 127, 78, 0.24), transparent 64%),
+    radial-gradient(60% 65% at 30% 90%, rgba(10, 44, 43, 0.55), transparent 70%);
+  background-size: 190% 190%, 190% 190%, 200% 200%, 210% 210%;
+  background-repeat: no-repeat;
+  animation: hero-drift var(--hero-loop) ease-in-out infinite;
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%;
+  }
+  33% {
+    background-position: 26% 18%, 74% 30%, 62% 72%, 18% 84%;
+  }
+  66% {
+    background-position: 12% 34%, 88% 12%, 38% 88%, 34% 92%;
+  }
+}
+
+/* Keeps the headline off the warm fields as they drift under it. */
+.hero-scrim {
+  background: linear-gradient(
+    100deg,
+    rgba(14, 59, 58, 0.72) 0%,
+    rgba(14, 59, 58, 0.34) 48%,
+    rgba(14, 59, 58, 0) 78%
+  );
+}
+
+/* The reduced-motion block above already stops the drift; this makes the
+   resting state explicit rather than leaving it to a 0.01ms duration. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg {
+    animation: none;
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%;
+  }
+}
+
+/* Scroll wheel animation for showcase scroll indicator */
+@keyframes scroll-wheel {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(12px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-wheel {
+    animation: none;
+    opacity: 0.5;
+  }
+}
