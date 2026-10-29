@@ -44,7 +44,9 @@ const FRAMES: Record<string, Prep> = {
   dhanu: { src: 'image_b0a679dd.jpg', crop: { x: 44, y: 61, w: 779, h: 1121 }, sparkle: { x: 784, y: 1148, w: 40, h: 52 } },
   gajalakshmi: { src: 'image_5eb9d767.jpg', crop: { x: 52, y: 48, w: 792, h: 1103 }, sparkle: { x: 812, y: 1118, w: 32, h: 34 } },
   vithoba: { src: 'image_753afda.jpg', sparkle: at(843, 1145) },
-  'sankat-mochan': { src: 'image_9fbaaf29.jpg', sparkle: at(841, 1145) }
+  'sankat-mochan': { src: 'image_9fbaaf29.jpg', sparkle: at(841, 1145) },
+  't1-lakshmi-elephants': { src: 'image_146c7743.jpg', sparkle: { x: 810, y: 1115, w: 60, h: 60 } },
+  shrinathji: { src: 'image_dbe7aec9.jpg', sparkle: { x: 810, y: 1120, w: 55, h: 55 } }
 };
 
 const PRINT = { w: 1240, h: 1754 };

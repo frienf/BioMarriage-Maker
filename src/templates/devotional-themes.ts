@@ -286,5 +286,22 @@ export const DEV_THEMES: Record<Motif, DevTheme> = {
     invLang: 'mr',
     invFont: `var(--font-khand), ${SANS}`,
     tileOpacity: 0.11
+  },
+  narayan: {
+    motif: 'narayan',
+    layout: 'classic',
+    accent: '#7A5A1E',
+    accent2: '#C2A25A',
+    ink: '#2B2116',
+    label: '#5A3E1E',
+    paper: '#F0DFB5',
+    tint: '#F5E8C8',
+    head: `var(--font-martel), ${SERIF}`,
+    headWeight: 400,
+    body: `var(--font-hind), ${SANS}`,
+    invocation: '॥ ॐ नमो नारायणाय ॥',
+    invLang: 'sa',
+    invFont: `var(--font-martel), ${SERIF}`,
+    tileOpacity: 0.11
   }
 };

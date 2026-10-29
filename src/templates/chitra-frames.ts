@@ -169,6 +169,38 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     text: { top: 340, right: 80, bottom: 100, left: 80 },
     slot: { x: 555, y: 110, w: 150, h: 195, shape: 'rect' },
     size: 14
+  },
+
+  // Vishnu reclining on Shesha (Sheshashayi). Burnt parchment, gold carved border
+  // with lotus buds, gold naga emblem at head, oval photo opening top-right,
+  // faint Vishnu watermark behind details. Sparkle removed; border rebuilt.
+  sheshashayi: {
+    motif: 'narayan',
+    paper: '#F0DFB5', accent: '#7A5A1E', rule: '#C2A25A', ink: '#2B2116',
+    text: { top: 380, right: 78, bottom: 92, left: 78 },
+    slot: { x: 542, y: 108, w: 154, h: 202, shape: 'oval' },
+    moulding: 30,
+    size: 14
+  },
+  't1-lakshmi-elephants': {
+    motif: 'lakshmi',
+    paper: '#F5F2EA', accent: '#8A5A2A', rule: '#8A5A2A', ink: '#3A2418',
+    text: { top: 390, right: 70, bottom: 100, left: 70 },
+    slot: { x: 545, y: 155, w: 160, h: 160, shape: 'oval' },
+    moulding: 28,
+    size: 14
+  },
+  // Shrinathji Pichwai: cusped arched window at top right (navy empty state, must be
+  // fully covered by photo — no navy hairline at any edge at 400% zoom). Slot path
+  // traces the inner navy opening edge; moulding measured from gold frame + ledge.
+  shrinathji: {
+    motif: 'krishna',
+    paper: '#FFF5DE', accent: '#0E6B6F', rule: '#B8903A', ink: '#2C1E15',
+    text: { top: 360, right: 80, bottom: 120, left: 80 },
+    slot: { x: 550, y: 100, w: 165, h: 230, shape: 'path',
+      path: 'M 14 218 L 14 120 L 20 74 L 26 57 L 33 52 L 39 43 L 46 42 L 52 38 L 58 33 L 71 31 L 81 25 L 90 29 L 103 33 L 110 35 L 116 38 L 122 42 L 135 54 L 142 68 L 145 74 L 151 113 L 151 218 L 14 218 Z' },
+    moulding: 10,
+    size: 14
   }
 };
 

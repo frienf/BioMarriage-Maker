@@ -9,7 +9,7 @@ import type { Motif } from './motifs.ts';
  * templates and 6 files.
  */
 
-export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 't1' | 't2' | 't3' | 't4';
+export type LayoutKind = 'kumkum' | 'akash' | 'saral' | 'mayur' | 'paramparik' | 'devotional' | 'chitra' | 't2' | 't3' | 't4';
 
 export type Collection = 'traditional' | 'devotional' | 'modern' | 'minimal' | 'premium' | 'hindi' | 'marathi';
 
@@ -65,7 +65,6 @@ export const SWATCHES: Record<LayoutKind, Swatch[]> = {
   ],
   devotional: [],
   chitra: [],
-  t1: [{ hex: '#7B1E2B', label: 'Maroon (TODO)' }],
   t2: [{ hex: '#145250', label: 'Teal green (TODO)' }],
   t3: [{ hex: '#6B3A1E', label: 'Golden brown (TODO)' }],
   t4: [{ hex: '#5A3A2B', label: 'Stone brown (TODO)' }],
@@ -141,6 +140,8 @@ export const TEMPLATES: TemplateDef[] = [
     blurb: 'Vitthal in gold line, a scalloped portrait frame, and a green and gold border with key-pattern corners.' },
   { slug: 'sankat-mochan', title: 'Sankat Mochan', collection: 'devotional', layout: 'chitra', pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
     blurb: 'Hanuman carrying the mountain against a sunburst, with gada and mountain bands across an aged page.' },
+  { slug: 'sheshashayi', title: 'Sheshashayi', collection: 'devotional', layout: 'chitra', motif: 'narayan', pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'A gold naga hood over a lotus at the head of the page, an oval portrait under a jewelled cobra crown, and Vishnu reclining on Shesha faintly behind the details, on burnt-edge parchment with a carved lotus-bud border.' },
 
   // Modern
   { slug: 'akash', title: 'Akash', collection: 'modern', layout: 'akash', accent: '#1F3A68', pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
@@ -169,10 +170,16 @@ export const TEMPLATES: TemplateDef[] = [
     blurb: 'Laid out for Marathi from the start, with Devanagari numerals throughout.' },
 
   // Rebuilt designs (code-based, full-page decorative art + measured photo/content)
-  { slug: 't1-lakshmi-elephants', title: 'Lakshmi Elephants', collection: 'traditional', layout: 't1', accent: '#7A3B1C', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_146c7743 (full decorative background + circle photo). Art must be regenerated at A4 ratio.' },
+  { slug: 't1-lakshmi-elephants', title: 'Lakshmi Elephants', collection: 'devotional', layout: 'chitra', motif: 'lakshmi', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Lakshmi seated on a lotus between two elephants, a round portrait in a lotus-petal frame, and a faint Sri Yantra behind the details, inside a terracotta border of gilded lotuses and kalash.' },
   { slug: 't2-green-lotus', title: 'Green Lotus', collection: 'traditional', layout: 't2', accent: '#145250', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_404a553f (full decorative background + circle photo + left lotus strip).' },
   { slug: 't3-murugan-vel', title: 'Murugan Vel', collection: 'devotional', layout: 't3', accent: '#8A5A30', pricePaise: PRICE.standard, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_9372ce8f (full decorative parchment + rect photo + peacock feather border). Art must be regenerated at A4 ratio.' },
   { slug: 't4-stone-arch', title: 'Stone Arch', collection: 'premium', layout: 't4', accent: '#5A3A2B', pricePaise: PRICE.premium, docLocales: ALL, pages: 1, blurb: 'Rebuilt from Design Template image_30039c0 (carved stone decorative border + arched photo + deity niche).' },
+
+  // Shrinathji (Pichwai): cows and pink lotuses in a peacock-teal border, a peacock
+  // feather and gold tilak at the head, an arched window for the portrait, and a
+  // Pichwai Krishna faintly behind the details. Navy arched window is the empty state.
+  { slug: 'shrinathji', title: 'Shrinathji', collection: 'devotional', layout: 'chitra', motif: 'krishna', pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Cows and pink lotuses in a Pichwai border of peacock teal, a peacock feather and gold tilak at the head, an arched window for the portrait, and a Pichwai Krishna faintly behind the details.' },
 
   // Note: manifest-based artwork system retired; designs rebuilt as t1-t4 above.
 ];
