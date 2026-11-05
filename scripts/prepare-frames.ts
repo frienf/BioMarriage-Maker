@@ -31,6 +31,10 @@ type Prep = {
   sparkle?: Box | false;
   /** Feather the mirrored repair within its box, preserving the adjacent art. */
   sparkleFeather?: number;
+  /** PNG mask (same size as the sparkle box) restricting the mirrored paste
+   *  to the sparkle's silhouette — for a sparkle bigger than the feathered box
+   *  can safely cover. The mask's own alpha decides each pixel. */
+  sparkleMask?: string;
   fills?: Array<Box & { colour: string }>;
   /** Optional pre-scale factor. When set, the art is scaled uniformly by this
    *  factor and centred on a paper-colour A4 canvas, so the outermost drawn
@@ -186,6 +190,96 @@ const FRAMES: Record<string, Prep> = {
     fillColour: { r: 255, g: 255, b: 255 },
     printSize: { w: 1588, h: 2246 },
     sharpen: true
+  },
+  // Aditya (new chitra frame, R8): radiant rising sun over three lotuses at the
+  // head, oval portrait framed by a golden sunburst top-right, thin double gold
+  // border with concave-corner scallops and corner sunbursts, large faint
+  // multi-pointed solar star watermark. Source 896 x 1200 (ratio 0.7467, ~5.6%
+  // off A4). NOTE: this source carries NO generator sparkle logo - the
+  // four-point star does not appear anywhere in the file; the BR corner
+  // sunburst is simply drawn brighter by the generator and is ART (corner
+  // sunbursts must not be retouched). `sparkle: false` skips the default
+  // mirror-repair so the BR corner is left exactly as drawn. Ratios reached by
+  // uniform scale 1506/896 (same as the other 896x1200 frames): the outermost
+  // drawn pixel clears 20 CSS px on the sides (margins ~41 print px) with
+  // white margins top and bottom (~57 CSS px). Lanczos upscale + light unsharp
+  // mask; the result is upscaled, not sharper.
+  aditya: {
+    src: 'image_6cde4e46.jpg',
+    sparkle: false,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Shankha Mandala (new chitra frame, R2/R7/R8): twin golden conches flank a
+  // centred circular lotus-petal photo frame, with a large faint lotus mandala
+  // behind the details inside a continuous gold lotus-vine border on warm
+  // golden-beige paper. Source 896 x 1200 (ratio 0.7467, 5.6% off A4); its
+  // bottom floral band is cropped by the source edge and is left as drawn.
+  // Generator sparkle (four-point logo, bottom right over the border) is
+  // painted out by a feathered mirror of the bottom-left corner; box 802,1104
+  // 76x76 covers the star and its glow. Uniform scale 1506/896 = 1.6808 (0.948
+  // of the A4 contain size): 1506 x 2017 art centred on pure white 1588 x 2246
+  // leaves 20.5 CSS px sides and 57 CSS px top/bottom. Lanczos + light unsharp.
+  'shankha-mandala': {
+    src: 'image_8dae3b9.jpg',
+    sparkle: { x: 802, y: 1104, w: 76, h: 76 },
+    sparkleFeather: 10,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Annapurna (new chitra frame, R1-R8): Goddess Annapurna seated holding grain
+  // ladle and pot of food at top-left, simple beveled terracotta rectangle
+  // portrait frame at top-right (white empty-state opening), faint large
+  // purna-kalasha watermark centred in the lower half, thick terracotta
+  // wooden-style border with rope texture and triangular corner blocks on
+  // warm cream. Source 896 x 1200 (ratio 0.7467, 5.6% off A4).
+  // A large translucent four-point sparkle (~80x64 source px) sits over the
+  // bottom-right corner's boxed-diagonal motif, invisible to white-pixel
+  // scans (it peaks near 30% opacity). It is removed by pasting the flopped
+  // bottom-left corner (byte-matching art beneath) through
+  // reference/annapurna-sparkle-mask.png — the star's connected component
+  // (d>45), dilated 2px, blurred 1.5px — so no other source pixel is touched.
+  // Regenerate the mask with reference/annapurna-gen-sparkle-mask.mjs if the
+  // source art is ever replaced. Uniform scale 1506/896 = 1.6808 on a pure
+  // white 1588 x 2246 canvas (20.5 CSS px sides, 57 CSS px top/bottom).
+  // Lanczos + light unsharp; upscaled, not sharper.
+  annapurna: {
+    src: 'image_3564d7eb.jpg',
+    sparkle: { x: 780, y: 1095, w: 112, h: 88 },
+    sparkleMask: 'reference/annapurna-sparkle-mask.png',
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Kamadeva (new chitra frame, R1-R8): cream chamfered card on a light
+  // marble backdrop: the marble is a mockup element only and is cropped
+  // away entirely (crop 33,40,798,1157 in source px). Crossed sugarcane
+  // bow and arrows with flower (classic Kamadeva emblem) at the head, a
+  // chamfered rose-gold portrait frame top-right with a light-grey
+  // empty-state panel, a large faint Sri Yantra watermark in the cream
+  // field, and a thin double rose-gold / copper border with corner
+  // triangles. Source 864 x 1232 (ratio 0.7013, 0.8% off A4).
+  // NOTE: this source carries NO generator sparkle logo anywhere on the
+  // card (bottom-right empty region verified against neighbouring cream;
+  // corner triangles are ART and are left untouched) so `sparkle: false`
+  // skips the default mirror-repair. A4 reached by uniform scale
+  // 1.8721 (cropped 798x1157 -> 1494x2166) centred on a pure white
+  // 1588 x 2246 canvas: the outermost drawn pixel clears 23.5 CSS px on
+  // the sides and 20.0 CSS px top/bottom. Lanczos + light unsharp; the
+  // result is upscaled, not sharper.
+  kamadeva: {
+    src: 'image_4630a88d.jpg',
+    crop: { x: 33, y: 40, w: 798, h: 1157 },
+    sparkle: false,
+    scale: 1.8721,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
   }
 };
 
@@ -238,7 +332,25 @@ for (const [slug, p] of Object.entries(FRAMES)) {
     // in its image, and the image's own centre would copy in a strip of backdrop.
     const axis = p.crop ? 2 * p.crop.x + p.crop.w - 1 : W - 1;
     let mirror = await sharp(file).extract({ left: axis - box.x - box.w + 1, top: box.y, width: box.w, height: box.h }).flop().toBuffer();
-    if (p.sparkleFeather) {
+    if (p.sparkleMask) {
+      // A bespoke mask (e.g. a large translucent sparkle): the mirrored crop
+      // is kept only where the mask is opaque, leaving the untouched source
+      // everywhere else — no seam, no box-edge ghost.
+      const maskRaw = await sharp(path.resolve(p.sparkleMask)).raw().toBuffer({ resolveWithObject: true });
+      const { width: mw, height: mh, channels: mc } = maskRaw.info;
+      const { data: md } = maskRaw;
+      const rgba = Buffer.allocUnsafe(mw * mh * 4);
+      for (let i = 0; i < mw * mh; i++) {
+        rgba[i * 4] = 255;
+        rgba[i * 4 + 1] = 255;
+        rgba[i * 4 + 2] = 255;
+        rgba[i * 4 + 3] = mc === 1 ? md[i] : md[i * mc + (mc - 1)];
+      }
+      mirror = await sharp(mirror).ensureAlpha()
+        .composite([{ input: await sharp(rgba, { raw: { width: mw, height: mh, channels: 4 } }).png().toBuffer(), blend: 'dest-in' }])
+        .png()
+        .toBuffer();
+    } else if (p.sparkleFeather) {
       const inset = p.sparkleFeather;
       const mask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${box.w}" height="${box.h}"><rect x="${inset}" y="${inset}" width="${box.w - 2 * inset}" height="${box.h - 2 * inset}" rx="7" fill="white"/></svg>`);
       const feathered = await sharp(mask).blur(3).png().toBuffer();

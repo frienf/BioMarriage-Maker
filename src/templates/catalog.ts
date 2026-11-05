@@ -277,6 +277,31 @@ export const TEMPLATES: TemplateDef[] = [
   // watermark centred, warm parchment field in sandstone tones.
   { slug: 'jagannath-mandir', title: 'Jagannath Mandir', collection: 'devotional', layout: 'chitra', motif: 'jagannath', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: new motif, no specific deity entry
     blurb: 'Stone temple architecture in sandstone tones with an elephant frieze, a carved Jagannath face between pillars, a cusped stone arch for the portrait, and a faint ornate chariot wheel behind the details.' },
+  // Aditya (new chitra frame): a radiant rising sun over three lotuses at the
+  // head, an oval portrait framed by a golden sunburst at the top right, a
+  // large faint solar star behind the details, and a thin gold border with
+  // corner sunbursts on warm cream.
+  { slug: 'aditya', title: 'Aditya', collection: 'devotional', layout: 'chitra', motif: 'aditya', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: Surya/Aditya not in the deity list; sun-design, aesthetic choice
+    blurb: 'Soft cream field inside a thin gold double border with corner sunbursts, a radiant rising sun over three lotuses at the head, an oval portrait framed by a golden sunburst, and a large faint solar star behind the details.' },
+  // Shankha Mandala (new chitra frame): twin golden conches flank a centred
+  // circular lotus-petal portrait frame at the head, a large intricate lotus
+  // mandala sits behind the details, and a continuous gold lotus-vine border
+  // frames a warm golden-beige field. Distinct from padma-shankha (single
+  // conch emblem, rectangle portrait top-right, left lotus vine) and from the
+  // top-right circular frames of lakshmi-padma, gokul and t1-lakshmi-elephants.
+  { slug: 'shankha-mandala', title: 'Shankha Mandala', collection: 'devotional', layout: 'chitra', motif: 'shankha', deities: ['vishnu'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Warm golden-beige field inside an elegant gold lotus-vine border, a circular lotus-petal frame flanked by twin golden conches, and a large intricate lotus mandala behind the details.' },
+  // Annapurna (new chitra frame): Goddess Annapurna holding a ladle of grain
+  // and a pot of food, a beveled terracotta rectangle portrait frame, a faint
+  // purna-kalasha watermark, a terracotta wooden-style border with rope texture.
+  { slug: 'annapurna', title: 'Annapurna', collection: 'devotional', layout: 'chitra', motif: 'annapurna', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: Annapurna (Parvati's grain-giving form) has no deity category in the catalogue yet
+    blurb: 'Warm cream field inside a terracotta wooden-style border, Goddess Annapurna holding a ladle of grain and a pot of food, a simple rectangular frame for the portrait, and a faint purna-kalasha behind the details.' },
+  // Kamadeva (new chitra frame): cream chamfered card, crossed sugarcane bow
+  // and arrows with flower (the classic Kamadeva emblem) at the head, a
+  // chamfered rose-gold portrait frame, a faint Sri Yantra behind the
+  // details, and a thin double rose-gold border with corner triangles.
+  { slug: 'kamadeva', title: 'Kamadeva', collection: 'devotional', layout: 'chitra', motif: 'kamadeva', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: Kamadeva (love god) has no deity category in the catalogue yet
+    blurb: 'Soft cream chamfered card with a thin double rose-gold border, the crossed sugarcane bow and arrows of Kamadeva at the head, a chamfered frame for the portrait, and a faint Sri Yantra behind the details.' },
 ];
 
 export function templateBySlug(slug: string): TemplateDef | undefined {

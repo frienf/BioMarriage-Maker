@@ -19,7 +19,13 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
   if (!f) return null;
   const t = DEV_THEMES[f.motif];
   const l = labelsFor(data.docLocale);
-  const built = buildSections(data, (slug === 'vaibhav-lakshmi' || slug === 'jagannath-mandir') && data.docLocale === 'mr' ? 'devanagari' : 'latin');
+  const built = buildSections(
+    data,
+    (slug === 'vaibhav-lakshmi' || slug === 'jagannath-mandir' || slug === 'aditya' || slug === 'shankha-mandala' || slug === 'annapurna' || slug === 'kamadeva') &&
+      data.docLocale === 'mr'
+      ? 'devanagari'
+      : 'latin'
+  );
   const s = f.slot;
   const spacer = slotSpacer(f);
 
@@ -48,7 +54,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
         color: f.ink,
         fontFamily: t.body,
         fontSize: f.size,
-        lineHeight: 1.32
+        lineHeight: slug === 'aditya' ? 1.24 : slug === 'shankha-mandala' ? 1.2 : slug === 'annapurna' ? 1.18 : slug === 'kamadeva' ? 1.18 : 1.32
       }}
     >
       {/* Never loading="lazy": PrintReady waits for every image to decode, and a
@@ -76,7 +82,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
       <div style={{ position: 'relative' }}>
         {spacer ? <div aria-hidden="true" style={{ float: 'right', width: spacer.w, height: spacer.h }} /> : null}
 
-        <header data-chitra-head="" style={{ textAlign: 'center', marginBottom: 10, display: f.containHeader ? 'flow-root' : undefined }}>
+        <header data-chitra-head="" style={{ textAlign: 'center', marginBottom: slug === 'shankha-mandala' ? 6 : slug === 'annapurna' ? 6 : slug === 'kamadeva' ? 6 : 10, display: f.containHeader ? 'flow-root' : undefined }}>
           <p lang={t.invLang} style={{ margin: 0, fontFamily: t.invFont, fontSize: 13, color: f.accent }}>
             {t.invocation}
           </p>
@@ -91,24 +97,24 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
             }
           >
             <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 600 }}>{built.kicker}</p>
-            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: slug === 'simha' ? 26 : 28, lineHeight: slug === 'simha' ? 1.1 : 1.15, color: f.accent }}>
+            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva') ? 26 : slug === 'shankha-mandala' ? 22 : 28, lineHeight: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva') ? 1.1 : slug === 'shankha-mandala' ? 1.05 : 1.15, color: f.accent }}>
               {built.name}
             </h1>
           </div>
-          {built.subtitle ? <p style={{ margin: '2px 0 0', fontSize: 14 }}>{built.subtitle}</p> : null}
+          {built.subtitle ? <p style={{ margin: '2px 0 0', fontSize: slug === 'shankha-mandala' ? 13 : 14 }}>{built.subtitle}</p> : null}
         </header>
 
-        <div data-chitra-body="" style={{ clear: 'both', columnCount: 2, columnGap: 24 }}>
+        <div data-chitra-body="" style={{ clear: 'both', columnCount: 2, columnGap: slug === 'shankha-mandala' ? 20 : 24 }}>
           {built.sections.map((sec, i) => (
-            <section key={i} style={{ marginBottom: slug === 'simha' ? 9 : 7 }}>
+            <section key={i} style={{ marginBottom: slug === 'simha' ? 9 : slug === 'aditya' ? 5 : slug === 'shankha-mandala' ? 2 : slug === 'annapurna' ? 3 : slug === 'kamadeva' ? 3 : 7 }}>
               <h2
                 style={{
-                  margin: '0 0 3px',
-                  paddingBottom: 2,
+                  margin: slug === 'shankha-mandala' ? '0 0 2px' : '0 0 3px',
+                  paddingBottom: slug === 'shankha-mandala' ? 1 : 2,
                   borderBottom: `1px solid ${f.rule}`,
                   fontFamily: t.head,
                   fontWeight: t.headWeight,
-                  fontSize: 16,
+                  fontSize: slug === 'shankha-mandala' ? 14 : 16,
                   lineHeight: 1.25,
                   color: f.accent,
                   breakAfter: 'avoid'

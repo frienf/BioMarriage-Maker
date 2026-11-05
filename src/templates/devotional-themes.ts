@@ -422,5 +422,68 @@ export const DEV_THEMES: Record<Motif, DevTheme> = {
     invLang: 'sa',
     invFont: `var(--font-martel), ${SERIF}`,
     tileOpacity: 0.11
+  },
+  // Aditya: the new solar frame (layout chitra). Deep gold darkened from the
+  // frame's sampled inner gold (#9C7C3C, 3.48:1 vs paper) to clear 4.5:1 while
+  // staying in the same hue family; the ink is the border's dark rule.
+  aditya: {
+    motif: 'aditya',
+    layout: 'classic',
+    accent: '#84601F',
+    accent2: '#9C7C3C',
+    ink: '#542C14',
+    label: '#5C3C24',
+    paper: '#FBF1D8',
+    tint: '#F6EACB',
+    head: `var(--font-martel), ${SERIF}`,
+    headWeight: 400,
+    body: `var(--font-hind), ${SANS}`,
+    invocation: '॥ ॐ सूर्याय नमः ॥',
+    invLang: 'sa',
+    invFont: `var(--font-martel), ${SERIF}`,
+    tileOpacity: 0.11
+  },
+  // Annapurna (new chitra frame, layout chitra). No new fonts: reuses the
+  // Lakshmi pairing (Sura, classical serif) for head, body and invocation.
+  // tileOpacity 0.11 sits in the 0.10-0.12 band; no figure and no twoPage.
+  // Invocation follows the reference art; owner to confirm.
+  annapurna: {
+    motif: 'annapurna',
+    layout: 'classic',
+    accent: '#863F28',
+    accent2: '#A66B45',
+    ink: '#2B2116',
+    label: '#6B4A32',
+    paper: '#FDFCF6',
+    tint: '#F7EDE3',
+    head: `var(--font-sura), ${SERIF}`,
+    headWeight: 700,
+    body: `var(--font-sura), ${SERIF}`,
+    invocation: '॥ ॐ अन्नपूर्णायै नमः ॥',
+    invLang: 'sa',
+    invFont: `var(--font-sura), ${SERIF}`,
+    tileOpacity: 0.11
+  },
+  // Kamadeva (new chitra frame, layout chitra). No new fonts: reuses the
+  // Saraswati pairing (Vesper head / Martel body, classical serif) for
+  // head, body and invocation. tileOpacity 0.11 sits in the 0.10-0.12
+  // band; no figure and no twoPage. Invocation follows the reference
+  // (owner to confirm).
+  kamadeva: {
+    motif: 'kamadeva',
+    layout: 'classic',
+    accent: '#764438',
+    accent2: '#A66B45',
+    ink: '#2B2116',
+    label: '#6B4A32',
+    paper: '#FAFCEF',
+    tint: '#F7EDE3',
+    head: `var(--font-vesper), ${SERIF}`,
+    headWeight: 700,
+    body: `var(--font-martel), ${SERIF}`,
+    invocation: '॥ ॐ कामाय नमः ॥',
+    invLang: 'sa',
+    invFont: `var(--font-vesper), ${SERIF}`,
+    tileOpacity: 0.11
   }
 };

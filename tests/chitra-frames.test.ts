@@ -153,6 +153,24 @@ test('jagannath-mandir is a separate devotional Chitra frame with a cusped portr
   assert.deepEqual([print.width, print.height], [1588, 2246]);
 });
 
+test('aditya leaves the outer 20 CSS pixels free of artwork', async () => {
+  for (const x of [0, 20, 38, 1549, 1570, 1587]) {
+    for (const y of [140, 600, 1123, 1700, 2245]) {
+      const { data } = await sharp(file('assets/frames/aditya.jpg')).extract({ left: x, top: Math.min(y, 2245), width: 1, height: 1 }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      assert.ok(data[0] >= 245 && data[1] >= 245 && data[2] >= 245, `edge art at ${x},${y}`);
+    }
+  }
+  for (const y of [0, 60, 113, 2132, 2200, 2245]) {
+    const { data } = await sharp(file('assets/frames/aditya.jpg')).extract({ left: 700, top: y, width: 1, height: 1 }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    assert.ok(data[0] >= 245 && data[1] >= 245 && data[2] >= 245, `edge art at 700,${y}`);
+  }
+  const template = TEMPLATES.find((t) => t.slug === 'aditya');
+  assert.ok(template, 'aditya catalogue row');
+  assert.equal(template.collection, 'devotional');
+  assert.equal(template.pricePaise, 4900);
+  assert.deepEqual(template.docLocales, ['en', 'hi', 'mr']);
+});
+
 test('the print copy is read only for a known frame', async () => {
   assert.match(await frameDataUri('vinayak'), /^data:image\/jpeg;base64,/);
   await assert.rejects(frameDataUri('../../package'));

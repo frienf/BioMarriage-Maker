@@ -557,6 +557,191 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     },
     moulding: 20,
     size: 14
+  },
+  // Aditya (new chitra frame, R11): radiant rising sun over three lotuses at the
+  // head, an oval portrait framed by a golden sunburst (glory) top-right, a
+  // large faint multi-pointed solar star behind the details, and a thin double
+  // gold border with concave scallops plus corner sunbursts. Source 896 x 1200
+  // (ratio 0.7467); uniform scale 1.681 (Lanczos + light unsharp), centred on a
+  // pure white 1588 x 2246 canvas — side margins ~41 print px (~20.5 CSS px),
+  // top/bottom ~114 print px (~57 CSS px). The source carries NO generator
+  // sparkle: the bottom-right corner was compared against a mirrored
+  // bottom-left corner at 4x and the full image was scanned — the BR corner's
+  // sunburst is drawn brighter by the generator and is ART, left untouched.
+  // Slot measured on the print copy at 4x zoom (2 image px = 1 CSS px): the
+  // opening INSIDE the innermost gold rim, an ellipse — left rim inner edge
+  // x=1050 print, right x=1322, top y=361, bottom y=722. CSS: x=525, y=180,
+  // w=136, h=181.
+  // Strategy B (strategy A forced the header below the rays at y=400 CSS and
+  // still overflowed the absolute maximum load): the text box starts 10px
+  // below the emblem's lowest painted pixel (y=583 print = 291.5 CSS), and
+  // the float reserves the oval + sunburst zone beside the header; the body
+  // clears it with clear:both. slotSpacer returns a 114px float.
+  // Left/right = 86 (double gold border's inner rules end at x=142 print
+  // = 71 CSS; 14px clearance). bottom = 125 (inner rule top edge y=2026
+  // print = 1013 CSS; 14px clearance). top is deliberately below the
+  // emblem, not centred; moulding 39 = largest ray reach toward the text
+  // (below 78/2 = 39; left 75/2 = 37.5; the top reach is 85/2 = 42).
+  // size 13 (the repo's floor, used with fit evidence) and dense Aditya-only
+  // settings in chitra.tsx (lineHeight 1.24, name 26px, section spacing 5px)
+  // — scoped to this slug in the pattern of the existing simha case — are
+  // what let the absolute maximum load (all optional fields, four siblings,
+  // three education rows, ~150-char expectations) fit exactly 1123px in
+  // en, hi and mr; without them English overflows by ~45px.
+  // Colours sampled from the art: paper #FBF1D8 (the dominant cream); accent
+  // #84601F (5.08:1 vs paper, darkened from sampled #9C7C3C at 3.48:1 within
+  // the same hue family); rule #9C7C3C (sampled inner gold); ink #542C14
+  // (10.7:1 vs paper, sampled from the border's dark rule).
+  aditya: {
+    motif: 'aditya',
+    paper: '#FBF1D8',
+    accent: '#84601F',
+    rule: '#9C7C3C',
+    ink: '#542C14',
+    text: { top: 302, right: 86, bottom: 125, left: 86 },
+    slot: { x: 525, y: 180, w: 136, h: 181, shape: 'oval' },
+    moulding: 39,
+    size: 13
+  },
+  // Shankha Mandala (new chitra frame, R2/R4/R8): twin golden conches flank a
+  // centred circular lotus-petal portrait frame at the head, a large faint
+  // lotus mandala behind the details, inside a gold lotus-vine border on warm
+  // golden-beige paper. Source 896 x 1200; generator sparkle rebuilt from the
+  // mirrored bottom-left corner; uniform scale 1.6808 on a pure white
+  // 1588 x 2246 canvas (20.5 CSS px sides, 57 CSS px top/bottom). The opening
+  // is the inside of the innermost gold rim: CSS 333.5..461.5 x 167..295
+  // (127 px circle; the 128 px oval covers the rim's antialiased inner edge so
+  // no beige hairline survives). The petal ring reaches 28 CSS px past the
+  // opening (33 source px measured at 4x), so text.top = slot bottom 295 + 28
+  // + 16 = 339. The box sits 8px inside the inner gold rule (left 98, right 99)
+  // and 8px above it (bottom 133). Colours sampled from the art: paper #E7D3AB
+  // (median of the text zone); accent #5E3F10, darkened from the conch's deep
+  // gold #82622D (3.83:1) to 6.52:1 vs paper and 4.70:1 vs the darkest field
+  // under the labels, #D1B180 (measured on the max load); rule #A0783C (sampled
+  // inner gold #B79862 darkened for print); ink #2B2116 (10.74:1 vs paper,
+  // 7.57:1 vs the darkest field under the values; the art's darkest line
+  // #796230 was too light for body text, so the repo's warm near-black is
+  // used). Source bottom band is cropped by the scanner; left as drawn.
+  'shankha-mandala': {
+    motif: 'shankha',
+    paper: '#E7D3AB',
+    accent: '#5E3F10',
+    rule: '#A0783C',
+    ink: '#2B2116',
+    text: { top: 339, right: 99, bottom: 133, left: 98 },
+    slot: { x: 333.5, y: 167, w: 128, h: 128, shape: 'oval' },
+    moulding: 28,
+    size: 13
+  },
+  // Annapurna (new chitra frame, R1-R8): Goddess Annapurna seated holding a
+  // ladle of grain and a pot of food at the head, a beveled terracotta
+  // rectangle portrait frame at the top right (white empty-state opening), a
+  // large faint purna-kalasha watermark centred in the lower half, and a
+  // thick terracotta wooden-style border with rope texture on warm cream.
+  // A large translucent four-point sparkle (~80x64 source px) sat over the
+  // bottom-right corner's boxed-diagonal motif, invisible to white-pixel
+  // scans (it peaks near 30% opacity). It was removed by pasting the flopped
+  // bottom-left corner (byte-matching art beneath) through a star-shaped mask
+  // (reference/annapurna-sparkle-mask.png, connected component of pixels
+  // differing by d>45, dilated 2px, blurred 1.5px); verified clean at 3x/6x
+  // zoom. Uniform scale 1506/896 = 1.6808 on a pure white 1588 x 2246
+  // canvas: first drawn pixel (threshold 245) at print x 42 / 1546,
+  // y 116 / 2130, i.e. 21 / 20.5 / 58 / 57.5 CSS px from L/R/T/B, all
+  // >= 20 CSS px, with 0 art pixels inside the 40-print-px safety band
+  // on every side. Lanczos + light unsharp; the result is upscaled, not
+  // sharper.
+  // Opening = the inside of the drawn frame, up to the terracotta: the
+  // bevel carries a baked soft inner-shadow ring (warm grey gradient) between
+  // the pure white and the frame art, so the slot covers it (bajrangbali
+  // precedent). Measured on the print copy: terracotta resumes at x=993
+  // (left), x=1294 (right), y=359 (top) and y=764 (bottom); every edge line
+  // is uniformly non-white (0 bad rows/cols scanned). Print x=994..1294,
+  // y=360..764 -> CSS x=497, y=180, w=150, h=202. Frame outer hard edge
+  // print x 954-1335, y 318-805: moulding left 20 CSS px, right 20.5, top 21
+  // (largest, governs), bottom 20.5 -> moulding: 21.
+  // Strategy B: the box starts 10px below the figure's lowest painted pixel
+  // (y=310 CSS) so the header (invocation, kicker, name) centres under the
+  // Annapurna figure; slotSpacer (float right) reserves the rectangular
+  // frame beside the head and the clear:both body starts below it. Strategy A
+  // (top = frame bottom + 16 = 418.5, set 424) overflowed the absolute
+  // maximum load by 126/108/121px in en/hi/mr; B with size 14 still
+  // overflowed by up to 22px, so size is 13 — the repo's floor, permitted
+  // because npm run fit shows it is needed — with lineHeight 1.24 scoped in
+  // chitra.tsx (same pattern as aditya/shankha-mandala). The absolute
+  // maximum load and a 68-char name all measure exactly 1123px in en/hi/mr.
+  // bottom=149 keeps the box 8 CSS px inside the innermost border edge
+  // (982 CSS); left/right=115 do the same for the side borders (inner
+  // edges 105.5 / 688.5 CSS); the float reserves the frame (moulding 21,
+  // clearance 37): the spacer is 219px wide, 99px tall; 345px of line width
+  // remains beside the photo, above the 300px floor).
+  // Colours sampled from the art: paper #FDFCF6 (dominant bright field),
+  // accent #863F28 (7.42:1 vs paper), rule #A05A32 (5.10:1), ink #2B2116
+  // (15.34:1); the kalasha's darkest line under the text zone (grey 198)
+  // keeps ink at 9.23:1. Per-glyph measurement against the real background
+  // (two-render method, reference/annapurna-contrast.cjs): worst accent
+  // 4.78 en / 4.84 hi / 4.71 mr, worst ink 10.10 / 10.05 / 9.91 — all
+  // clear of the 4.5 and 7 floors. The whole-text-box worst case is
+  // 4.46:1 (accent against the kalasha line at CSS 328,624), but no accent
+  // glyph lands on that pixel — the per-glyph floor above is what a reader
+  // actually sees.
+  annapurna: {
+    motif: 'annapurna',
+    paper: '#FDFCF6',
+    accent: '#863F28',
+    rule: '#A05A32',
+    ink: '#2B2116',
+    text: { top: 320, right: 115, bottom: 149, left: 115 },
+    slot: { x: 497, y: 180, w: 150, h: 202, shape: 'rect' },
+    moulding: 21,
+    size: 13
+  },
+  // Kamadeva (new chitra frame, R1-R8): cream chamfered card on a marble
+  // mockup backdrop (cropped away in prep: crop 33,40,798,1157); crossed
+  // sugarcane bow and arrows with flower (classic Kamadeva emblem) at the
+  // head, a chamfered rose-gold portrait frame top-right with a light-grey
+  // empty-state panel, a large faint Sri Yantra watermark in the cream
+  // field, and a thin double rose-gold / copper border with corner
+  // triangles. Source 864 x 1232 (ratio 0.7013, 0.8% off A4); uniform
+  // scale 1.8721 (cropped 798x1157 -> 1494x2166) centred on a pure white
+  // 1588 x 2246 canvas: margins 23.5/23.5/20.0/20.0 CSS px (R2). NO
+  // generator sparkle exists on the card; corner triangles are ART.
+  // Slot = inside of the innermost line (measured on the print copy at
+  // 2 image px = 1 CSS px): gray left edge 1111, right 1528, top 161,
+  // bottom 905; chamfer legs ~14 CSS px. The grey panel's baked soft
+  // inner edge is covered by the slot so no grey hairline survives at
+  // 400% (bajrangbali/annapurna precedent). Frame outer reach (strong
+  // gold) top ≈ 20 CSS px, bottom ≈ 25 CSS px; the slot is the inside
+  // edge, moulding takes the larger = 25.
+  // Strategy B: the absolute maximum load overflows strategy A
+  // (text.top = 494) by 182px in en, so the text box starts below the
+  // emblem and the float (slotSpacer) reserves the frame beside the
+  // head. The emblem's lowest painted pixel is ~308 CSS (print y=617);
+  // +10 clearance → text.top = 318. The spacer is slot.bottom +
+  // moulding + 16 - 318 (452.5+25+16-318 = 175.5 px tall, ≥ 60 rule).
+  // The beside-set rule measures slot.x - clearance - text.left >= 300:
+  // 548 - 41 - 72 = 435, clear. Left/right = 72 clears the inner double
+  // line (CSS 61 / 757.5) by ~11/0.5 px — see Phase 6 overlay; bottom =
+  // 1123 - 1091 = 32 clears the inner bottom line (2182/2 = 1091 CSS)
+  // by the required 8 CSS px.
+  // Colours sampled from the art: paper #FAFCEF, accent #764438
+  // (7.62:1 vs paper, darkened from the gold line's 2.24:1 within the
+  // same rose family), rule #936355 (4.87:1), ink #2B1E16 (15.57:1).
+  // size 13 (the repo's floor, used by the aditya/annapurna/shankha-
+  // mandala precedent where manual fit evidence shows it is needed):
+  // story below (Phase 5 max-load evidence).
+  kamadeva: {
+    motif: 'kamadeva',
+    paper: '#FAFCEF',
+    accent: '#764438',
+    rule: '#936355',
+    ink: '#2B1E16',
+    text: { top: 318, right: 72, bottom: 40, left: 72 },
+    slot: {
+      x: 550, y: 83, w: 212, h: 370, shape: 'path',
+      path: 'M 0 370 L 0 14 L 14 0 L 198 0 L 212 14 L 212 356 L 198 370 L 14 370 L 0 356 Z'
+    },
+    moulding: 25,
+    size: 13
   }
 };
 
