@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="864" height="1232">
+  <line x1="432" y1="0" x2="432" y2="1232" stroke="red" stroke-width="1" stroke-dasharray="10,5" opacity="0.6"/>
+  <line x1="0" y1="616" x2="864" y2="616" stroke="red" stroke-width="1" stroke-dasharray="10,5" opacity="0.6"/>
+  <rect x="560" y="100" width="160" height="160" fill="none" stroke="blue" stroke-width="2" opacity="0.6"/>
+  <rect x="380" y="30" width="120" height="80" fill="none" stroke="green" stroke-width="2" opacity="0.6"/>
+  <rect x="0" y="400" width="120" height="400" fill="none" stroke="yellow" stroke-width="1" opacity="0.6"/>
+  <text x="200" y="20" font-size="12" fill="red">Photo opening approx</text>
+</svg>

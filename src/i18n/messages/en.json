@@ -57,10 +57,13 @@
     "anyLanguage": "Any language",
     "style": "Style",
     "all": "All",
+    "deity": "Deity",
+    "allDeities": "All deities",
     "count": "{count, plural, =1 {1 template} other {# templates}}",
     "noneTitle": "No templates match these filters",
     "noneBody": "Try another style, or show every language.",
-    "clear": "Clear filters"
+    "clear": "Clear filters",
+    "allDesignsForDeity": "Show all {name} designs"
   },
   "detail": {
     "breadcrumb": "Templates",
@@ -76,7 +79,8 @@
     "inc3": "2 free edits after you pay, to fix a typo",
     "inc4": "If the PDF fails, try again at no cost",
     "continues": "Long sections continue neatly onto a second page. The editor tells you before anything would be cut.",
-    "moreTitle": "More {name} templates"
+    "moreTitle": "More {name} templates",
+    "moreDeityTitle": "More {name} designs"
   },
   "editor": {
     "saved": "Saved on this device a moment ago",

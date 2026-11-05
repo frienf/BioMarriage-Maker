@@ -7,6 +7,7 @@ import { TemplateCard } from '@/components/template-card';
 import { TemplateGrid } from '@/components/template-grid';
 import { COLLECTIONS, TEMPLATES, type Collection } from '@/templates/catalog';
 import { DOC_LOCALES, type DocLocale } from '@/lib/biodata';
+import { DEITY_IDS, DEITIES, deityLabel, matchesDeity, deitiesWithTemplates } from '@/templates/deities';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: t('title'), description: t('lede') };
 }
 
-type Search = { style?: string; lang?: string; q?: string };
+type Search = { style?: string; lang?: string; q?: string; deity?: string };
 
 /**
  * Filtering is URL state, not component state: the chips are links and the
@@ -36,23 +37,51 @@ export default async function GalleryPage({
   const style = (COLLECTIONS.find((c) => c.id === sp.style)?.id ?? 'all') as Collection | 'all';
   const lang = (DOC_LOCALES as readonly string[]).includes(sp.lang ?? '') ? (sp.lang as DocLocale) : 'any';
   const q = (sp.q ?? '').trim().toLowerCase();
+  const deityParam = (sp.deity ?? '').trim().toLowerCase();
+  const deity = (DEITY_IDS as readonly string[]).includes(deityParam) ? (deityParam as (typeof DEITY_IDS)[number]) : null;
 
-  const shown = TEMPLATES.filter((tpl) => {
+  // base filters (style, lang, search) without deity
+  const baseShown = TEMPLATES.filter((tpl) => {
     if (style !== 'all' && tpl.collection !== style) return false;
     if (lang !== 'any' && !tpl.docLocales.includes(lang)) return false;
-    if (q && !(`${tpl.title} ${tpl.blurb} ${tpl.collection}`.toLowerCase().includes(q))) return false;
+    if (q) {
+      const deityLabels = (tpl.deities ?? [])
+        .map((d) => {
+          const dd = DEITIES.find((x) => x.id === d);
+          if (!dd) return '';
+          return `${dd.label.en} ${dd.label.hi} ${dd.label.mr} ${dd.aliases.join(' ')}`;
+        })
+        .join(' ');
+      const haystack = `${tpl.title} ${tpl.blurb} ${tpl.collection} ${deityLabels}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
     return true;
   });
 
-  const href = (next: Partial<{ style: string; lang: string; q: string }>) => {
+  const shown = deity ? baseShown.filter((tpl) => matchesDeity(tpl, deity)) : baseShown;
+
+  const href = (next: Partial<{ style: string; lang: string; q: string; deity: string }>) => {
     const p = new URLSearchParams();
-    const merged = { style: style === 'all' ? '' : style, lang: lang === 'any' ? '' : lang, q, ...next };
+    const merged = {
+      style: style === 'all' ? '' : style,
+      lang: lang === 'any' ? '' : lang,
+      q,
+      deity: deity ?? '',
+      ...next
+    };
     for (const [k, v] of Object.entries(merged)) if (v) p.set(k, String(v));
     const s = p.toString();
     return s ? `/templates?${s}` : '/templates';
   };
 
   const chips: Array<{ id: string; label: string }> = [{ id: 'all', label: t('all') }, ...COLLECTIONS];
+
+  // Deity chips: only deities with at least one template (considering base filters)
+  const deityChips = deitiesWithTemplates(baseShown).map((id) => ({
+    id,
+    label: deityLabel(id, locale),
+    count: baseShown.filter((tpl) => matchesDeity(tpl, id)).length
+  }));
 
   return (
     <>
@@ -88,6 +117,7 @@ export default async function GalleryPage({
               </select>
             </label>
             {style !== 'all' ? <input type="hidden" name="style" value={style} /> : null}
+            {deity ? <input type="hidden" name="deity" value={deity} /> : null}
             <button type="submit" className="btn btn-primary">
               {t('search')}
             </button>
@@ -109,6 +139,39 @@ export default async function GalleryPage({
               ))}
             </div>
           </fieldset>
+
+          <fieldset style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <legend>{t('deity')}</legend>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, overflowX: 'auto' }}>
+              <Link
+                href={href({ deity: '' })}
+                className="chip"
+                data-on={deity === null ? 'true' : 'false'}
+                aria-current={deity === null ? 'true' : undefined}
+                aria-pressed={deity === null}
+              >
+                {t('allDeities')}
+              </Link>
+              {deityChips.map((c) => {
+                const disabled = c.count === 0;
+                return (
+                  <Link
+                    key={c.id}
+                    href={disabled ? '#' : href({ deity: c.id })}
+                    className="chip"
+                    data-on={c.id === deity ? 'true' : 'false'}
+                    aria-current={c.id === deity ? 'true' : undefined}
+                    aria-pressed={c.id === deity}
+                    aria-disabled={disabled ? 'true' : undefined}
+                    aria-label={`${c.label}, ${c.count}`}
+                    style={disabled ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+                  >
+                    {c.label} ({c.count})
+                  </Link>
+                );
+              })}
+            </div>
+          </fieldset>
         </form>
 
         <p aria-live="polite" className="muted small">
@@ -119,7 +182,7 @@ export default async function GalleryPage({
           <TemplateGrid
             items={shown.map((tpl) => ({
               slug: tpl.slug,
-              node: <TemplateCard def={tpl} collectionLabel={COLLECTIONS.find((c) => c.id === tpl.collection)?.label ?? ''} />
+              node: <TemplateCard def={tpl} collectionLabel={COLLECTIONS.find((c) => c.id === tpl.collection)?.label ?? ''} locale={locale} />
             }))}
           />
         ) : (
@@ -137,9 +200,15 @@ export default async function GalleryPage({
           >
             <p style={{ fontSize: 20, fontWeight: 600 }}>{t('noneTitle')}</p>
             <p className="muted">{t('noneBody')}</p>
-            <Link href="/templates" className="btn btn-outline-brand">
-              {t('clear')}
-            </Link>
+            {deity ? (
+              <Link href={href({ style: '', lang: '', q: '' })} className="btn btn-outline-brand">
+                {t('allDesignsForDeity', { name: deityLabel(deity, locale) })}
+              </Link>
+            ) : (
+              <Link href="/templates" className="btn btn-outline-brand">
+                {t('clear')}
+              </Link>
+            )}
           </div>
         )}
       </main>

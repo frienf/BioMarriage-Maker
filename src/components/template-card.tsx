@@ -4,12 +4,14 @@ import type { DocLocale } from '@/lib/biodata';
 import { sampleFor } from '@/templates/sample';
 import { ScaledSheet, TemplateSheet } from '@/templates/render';
 import type { TemplateDef } from '@/templates/catalog';
+import { primaryDeity } from '@/templates/deities';
+import { deityLabel } from '@/templates/deities';
 
 const LANG_NAMES: Record<DocLocale, string> = { en: 'English', hi: 'हिन्दी', mr: 'मराठी' };
 
 /** A gallery card. The thumbnail is the real template at 1/3 scale, filled with
  *  fictional sample details, so what you click is what you get. */
-export function TemplateCard({ def, collectionLabel }: { def: TemplateDef; collectionLabel: string }) {
+export function TemplateCard({ def, collectionLabel, locale }: { def: TemplateDef; collectionLabel: string; locale?: string }) {
   const previewLocale = def.docLocales[0];
   const data = { ...sampleFor(def.slug, previewLocale), templateSlug: def.slug };
 
@@ -41,7 +43,10 @@ export function TemplateCard({ def, collectionLabel }: { def: TemplateDef; colle
           <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 19, lineHeight: 1.2, margin: 0 }}>{def.title}</h3>
           <span style={{ fontWeight: 600, fontSize: 17 }}>{formatINR(def.pricePaise)}</span>
         </div>
-        <p className="xsmall muted" style={{ margin: 0 }}>{collectionLabel}</p>
+        <p className="xsmall muted" style={{ margin: 0 }}>
+          {collectionLabel}
+          {primaryDeity(def) ? ` · ${deityLabel(primaryDeity(def)!, locale || 'en')}` : ''}
+        </p>
         <ul aria-label="Languages" style={{ margin: 0, display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {def.docLocales.map((l) => (
             <li key={l} lang={l} className="pill" style={{ fontSize: 12, padding: '4px 8px' }}>

@@ -8,6 +8,7 @@ import { TemplateCard } from '@/components/template-card';
 import { Tick } from '@/components/toran';
 import { ColourPicker } from '@/components/colour-picker';
 import { COLLECTIONS, SWATCHES, TEMPLATES, templateBySlug } from '@/templates/catalog';
+import { primaryDeity, deityLabel, matchesDeity } from '@/templates/deities';
 import { ScaledSheet, TemplateSheet } from '@/templates/render';
 import { sampleFor } from '@/templates/sample';
 import { formatINR } from '@/lib/money';
@@ -38,6 +39,10 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
   const previewLocale = def.docLocales[0];
   const data = { ...sampleFor(def.slug, previewLocale), templateSlug: def.slug };
   const related = TEMPLATES.filter((x) => x.collection === def.collection && x.slug !== def.slug).slice(0, 3);
+  const pd = primaryDeity(def);
+  const deitySiblings = pd
+    ? TEMPLATES.filter((x) => x.slug !== def.slug && matchesDeity(x, pd)).slice(0, 6)
+    : [];
 
   return (
     <>
@@ -123,7 +128,22 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             <ul className="grid-cards">
               {related.map((r) => (
                 <li key={r.slug} style={{ display: 'flex' }}>
-                  <TemplateCard def={r} collectionLabel={collection.label} />
+                  <TemplateCard def={r} collectionLabel={collection.label} locale={locale} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {deitySiblings.length ? (
+          <section aria-labelledby="more-deity-title" style={{ display: 'flex', flexDirection: 'column', gap: 20, paddingTop: 32, borderTop: '1px solid var(--line)' }}>
+            <h2 id="more-deity-title" className="display" style={{ fontSize: 'var(--text-h2-sm)' }}>
+              {t('moreDeityTitle', { name: deityLabel(pd!, locale) })}
+            </h2>
+            <ul className="grid-cards">
+              {deitySiblings.map((r) => (
+                <li key={r.slug} style={{ display: 'flex' }}>
+                  <TemplateCard def={r} collectionLabel={COLLECTIONS.find((c) => c.id === r.collection)?.label ?? ''} locale={locale} />
                 </li>
               ))}
             </ul>

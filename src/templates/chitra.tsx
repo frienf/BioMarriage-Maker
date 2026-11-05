@@ -19,7 +19,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
   if (!f) return null;
   const t = DEV_THEMES[f.motif];
   const l = labelsFor(data.docLocale);
-  const built = buildSections(data);
+  const built = buildSections(data, (slug === 'vaibhav-lakshmi' || slug === 'jagannath-mandir') && data.docLocale === 'mr' ? 'devanagari' : 'latin');
   const s = f.slot;
   const spacer = slotSpacer(f);
 
@@ -76,7 +76,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
       <div style={{ position: 'relative' }}>
         {spacer ? <div aria-hidden="true" style={{ float: 'right', width: spacer.w, height: spacer.h }} /> : null}
 
-        <header data-chitra-head="" style={{ textAlign: 'center', marginBottom: 10 }}>
+        <header data-chitra-head="" style={{ textAlign: 'center', marginBottom: 10, display: f.containHeader ? 'flow-root' : undefined }}>
           <p lang={t.invLang} style={{ margin: 0, fontFamily: t.invFont, fontSize: 13, color: f.accent }}>
             {t.invocation}
           </p>
@@ -91,7 +91,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
             }
           >
             <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 600 }}>{built.kicker}</p>
-            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: 28, lineHeight: 1.15, color: f.accent }}>
+            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: slug === 'simha' ? 26 : 28, lineHeight: slug === 'simha' ? 1.1 : 1.15, color: f.accent }}>
               {built.name}
             </h1>
           </div>
@@ -100,7 +100,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
 
         <div data-chitra-body="" style={{ clear: 'both', columnCount: 2, columnGap: 24 }}>
           {built.sections.map((sec, i) => (
-            <section key={i} style={{ marginBottom: 7 }}>
+            <section key={i} style={{ marginBottom: slug === 'simha' ? 9 : 7 }}>
               <h2
                 style={{
                   margin: '0 0 3px',
