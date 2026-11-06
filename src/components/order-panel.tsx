@@ -6,6 +6,7 @@ import { motionTokens } from '@/lib/motion-tokens';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { AlertIcon, Tick } from '@/components/toran';
+import { editAvailability } from '@/lib/paid-editor';
 
 export type OrderStatus = {
   status: 'awaiting_payment' | 'paid' | 'failed' | 'refunded';
@@ -39,6 +40,7 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState('');
+  const [now, setNow] = useState(() => Date.now());
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/orders/${token}`, { cache: 'no-store' });
@@ -52,6 +54,14 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
     return () => window.clearInterval(id);
   }, [state.status, state.deleted, refresh]);
 
+  useEffect(() => {
+    if (!state.expiresAt) return;
+    const delay = Date.parse(state.expiresAt) - Date.now();
+    if (delay <= 0 || !Number.isFinite(delay)) return;
+    const id = window.setTimeout(() => setNow(Date.now()), Math.min(delay + 1, 2_147_483_647));
+    return () => window.clearTimeout(id);
+  }, [state.expiresAt, now]);
+
   if (state.deleted) {
     return (
       <motion.div className="note" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -62,6 +72,7 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
   }
 
   const until = state.expiresAt ? new Date(state.expiresAt).toLocaleDateString() : '';
+  const editState = editAvailability(state, now);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -78,6 +89,7 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
             {t('pendingTitle')}
           </h2>
           <p className="muted">{t('pendingBody')}</p>
+          <p className="small muted">{t('editPending')}</p>
           <p
             aria-live="polite"
             className="xsmall muted"
@@ -129,8 +141,11 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
             {downloading ? '…' : t('download')}
           </a>
           <p className="xsmall muted">
-            {t('orderNumber')}: {state.orderNumber} · {t('edits', { left: state.editLimit - state.editsUsed, total: state.editLimit })}
+            {t('orderNumber')}: {state.orderNumber} · {t('edits', { left: Math.max(0, state.editLimit - state.editsUsed), total: state.editLimit })}
           </p>
+          {editState === 'available' ? (
+            <Link href={`/orders/${token}/edit`} className="btn btn-outline-brand" style={{ alignSelf: 'start' }}>{t('editAction')}</Link>
+          ) : <p className="small muted">{t(editState === 'exhausted' ? 'editExhausted' : 'editExpired')}</p>}
           {error ? (
             <p className="error">
               <AlertIcon />
@@ -152,11 +167,13 @@ export function OrderPanel({ token, initial }: { token: string; initial: OrderSt
             {t('failedTitle')}
           </h2>
           <p className="muted">{t('failedBody')}</p>
+          <p className="small muted">{t('editUnpaid')}</p>
           <Link href="/review" className="btn btn-outline-brand" style={{ alignSelf: 'start' }}>
             {t('retry')}
           </Link>
         </motion.section>
       ) : null}
+      {state.status === 'refunded' ? <p className="note">{t('editRefunded')}</p> : null}
       </AnimatePresence>
 
       <section className="note" style={{ flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>

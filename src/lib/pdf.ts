@@ -1,6 +1,5 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import path from 'node:path';
 import { chromium } from 'playwright';
+export { pdfPathFor, storageDir } from './pdf-store.ts';
 
 /**
  * Renders the PDF on the server, from the same React templates the preview
@@ -11,25 +10,13 @@ import { chromium } from 'playwright';
  * PDF from devtools without paying, and html2pdf rasterises the page, which
  * loses selectable text. That decision is ADR-004 in the design.
  *
- * ponytail: rendered on demand and cached on disk, with no queue table or
- * worker. At the planning ceiling of about 1,000 renders a day one browser is
- * enough. Move to a queue when a render makes a request wait too long.
+ * Render on demand into memory; no PDF is written to disk. There is no queue
+ * or worker, so concurrent downloads each launch a browser.
  */
 
-export function storageDir(): string {
-  return path.resolve(process.env.STORAGE_DIR ?? './storage');
-}
-
-export function pdfPathFor(token: string): string {
-  // The token is base64url, so it has no path separators.
-  return path.join(storageDir(), `${token}.pdf`);
-}
-
-export async function renderOrderPdf(token: string): Promise<string> {
+export async function renderOrderPdf(token: string, revision: number): Promise<Buffer> {
   const origin = process.env.APP_ORIGIN ?? 'http://localhost:3000';
-  const target = `${origin}/print/${encodeURIComponent(token)}`;
-  const out = pdfPathFor(token);
-  await mkdir(storageDir(), { recursive: true });
+  const target = `${origin}/print/${encodeURIComponent(token)}?revision=${revision}`;
 
   const browser = await chromium.launch();
   try {
@@ -42,14 +29,12 @@ export async function renderOrderPdf(token: string): Promise<string> {
     // how a Devanagari conjunct ends up as a fallback glyph.
     await page.waitForSelector('[data-print-ready="true"]', { state: 'attached', timeout: 15_000 });
 
-    const pdf = await page.pdf({
+    return await page.pdf({
       format: 'A4',
       printBackground: true,
       preferCSSPageSize: true,
       margin: { top: '0', right: '0', bottom: '0', left: '0' }
     });
-    await writeFile(out, pdf);
-    return out;
   } finally {
     await browser.close();
   }

@@ -35,7 +35,8 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
   const def = templateBySlug(order.templateSlug);
   const initial: OrderStatus = {
     status: order.status as OrderStatus['status'],
-    pdfStatus: order.pdfStatus as OrderStatus['pdfStatus'],
+    // The renderer no longer maintains a cached PDF.
+    pdfStatus: 'none',
     orderNumber: order.orderNumber,
     downloadsUsed: order.downloadsUsed,
     downloadLimit: order.downloadLimit,

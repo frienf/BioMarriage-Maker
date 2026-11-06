@@ -10,10 +10,10 @@ import { eraseOrder, expiredOrders } from '../src/lib/orders.ts';
 const rows = await expiredOrders();
 let erased = 0;
 
-// eraseOrder removes the cached PDF along with the details.
+// Revisit erased orders too to collect legacy orphans. Cleanup is repeatable.
 for (const row of rows) {
   if (await eraseOrder(row.token)) erased += 1;
 }
 
-console.log(`Swept ${erased} of ${rows.length} expired orders.`);
+console.log(`Erased ${erased} orders; checked ${rows.length} expired or erased orders.`);
 process.exit(0);

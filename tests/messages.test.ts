@@ -39,3 +39,15 @@ test('the home page counts templates from the catalogue, never in words', () => 
     assert.match(load(l).home.how1Body, /\{count\}/, `${l} hard-codes the number of designs`);
   }
 });
+
+test('all locales provide the same usable support email', () => {
+  const email = load('en').contact.email;
+  assert.match(email, /^[^\s@\[\]]+@[^\s@\[\]]+\.[^\s@\[\]]+$/);
+  for (const locale of ['hi', 'mr']) assert.equal(load(locale).contact.email, email);
+});
+
+test('support response time is stated in each locale', () => {
+  for (const locale of ['en', 'hi', 'mr']) {
+    assert.doesNotMatch(load(locale).contact.hours, /[\[\]]/, `${locale} response time is still a placeholder`);
+  }
+});

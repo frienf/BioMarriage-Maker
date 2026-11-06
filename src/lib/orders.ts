@@ -1,10 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { rm } from 'node:fs/promises';
-import { and, eq, isNull, lt, sql } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull, lt, or, sql } from 'drizzle-orm';
 import { getDb } from './db/index.ts';
 import { orders, type OrderRow } from './db/schema.ts';
 import { orderNumber, purchaseToken } from './ids.ts';
-import { pdfPathFor } from './pdf.ts';
+import { removeOrderPdfs } from './pdf-store.ts';
 import type { Biodata } from './biodata.ts';
 import { templateBySlug } from '../templates/catalog.ts';
 
@@ -67,40 +66,46 @@ export async function markPaid(razorpayOrderId: string, razorpayPaymentId: strin
 }
 
 /**
- * Takes one download from the allowance, atomically.
+ * Authorizes a successfully rendered revision and consumes one download.
  *
  * Written as a single conditional UPDATE so two taps on the download button at
  * the same moment cannot both pass a check-then-write.
  */
-export async function consumeDownload(token: string): Promise<OrderRow | null> {
-  const db = getDb();
-  const [row] = await db
-    .update(orders)
-    .set({ downloadsUsed: sql`${orders.downloadsUsed} + 1` })
-    .where(
-      and(
-        eq(orders.token, token),
-        eq(orders.status, 'paid'),
-        isNull(orders.deletedAt),
-        sql`${orders.downloadsUsed} < ${orders.downloadLimit}`,
-        sql`${orders.expiresAt} > now()`
+export async function consumeDownload(token: string, revision: number): Promise<OrderRow | null> {
+  return getDb().transaction(async (tx) => {
+    // Acquire the lock first: expiry must be evaluated after any lock wait.
+    const [locked] = await tx.select({ token: orders.token }).from(orders)
+      .where(eq(orders.token, token)).for('update');
+    if (!locked) return null;
+    const [row] = await tx
+      .update(orders)
+      .set({ downloadsUsed: sql`${orders.downloadsUsed} + 1`, pdfStatus: 'none', pdfPath: null })
+      .where(
+        and(
+          eq(orders.token, token),
+          eq(orders.editsUsed, revision),
+          eq(orders.status, 'paid'),
+          isNull(orders.deletedAt),
+          sql`${orders.downloadsUsed} < ${orders.downloadLimit}`,
+          sql`${orders.expiresAt} > clock_timestamp()`
+        )
       )
-    )
-    .returning();
-  return row ?? null;
+      .returning();
+    return row ?? null;
+  });
 }
 
 /**
- * Never touches an erased order, so a render that finishes after erasure
- * cannot mark it ready again. Returns false when the order is erased (or
- * unknown), which is how the download route learns its file must go.
+ * Only update a still-eligible revision. The download path does not persist
+ * rendered PDFs; this helper remains for existing callers.
  */
-export async function setPdfStatus(token: string, pdfStatus: 'none' | 'rendering' | 'ready' | 'failed', pdfPath?: string) {
+export async function setPdfStatus(token: string, pdfStatus: 'none' | 'rendering' | 'ready' | 'failed', pdfPath?: string, revision = 0) {
   const db = getDb();
   const rows = await db
     .update(orders)
     .set({ pdfStatus, ...(pdfPath ? { pdfPath } : {}) })
-    .where(and(eq(orders.token, token), isNull(orders.deletedAt)))
+    .where(and(eq(orders.token, token), eq(orders.editsUsed, revision), eq(orders.status, 'paid'),
+      isNull(orders.deletedAt), sql`${orders.expiresAt} > now()`))
     .returning({ token: orders.token });
   return rows.length > 0;
 }
@@ -113,25 +118,21 @@ export async function setPdfStatus(token: string, pdfStatus: 'none' | 'rendering
  * deleted.
  */
 export async function eraseOrder(token: string) {
-  const db = getDb();
-  const [row] = await db
-    .update(orders)
+  const [erased] = await getDb().update(orders)
     .set({ biodata: null, pdfStatus: 'none', pdfPath: null, deletedAt: new Date() })
-    .where(and(eq(orders.token, token), isNull(orders.deletedAt)))
-    .returning();
-  // The cached PDF is the same personal details, so it goes too. The path is
-  // built from the stored token, never the caller's, so a crafted token from
-  // the URL cannot point rm anywhere. A download mid-render when this lands
-  // removes its own file once setPdfStatus refuses it.
-  if (row) await rm(pdfPathFor(row.token), { force: true });
-  return row ?? null;
+    .where(and(eq(orders.token, token), isNull(orders.deletedAt))).returning();
+  // Erasure commits before cleanup. Repeated sweeps also revisit deleted rows
+  // after a crash or filesystem error between those operations.
+  const row = erased ?? await orderByToken(token);
+  if (row?.deletedAt) await removeOrderPdfs(row.token);
+  return erased ?? null;
 }
 
-/** Everything past its retention date and not yet erased. Used by the sweeper. */
+/** Also revisit erased rows to collect legacy orphans after a cleanup failure. */
 export async function expiredOrders(now: Date = new Date()) {
   const db = getDb();
   return db
     .select()
     .from(orders)
-    .where(and(lt(orders.expiresAt, now), isNull(orders.deletedAt)));
+    .where(or(and(lt(orders.expiresAt, now), isNull(orders.deletedAt)), isNotNull(orders.deletedAt)));
 }

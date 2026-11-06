@@ -10,7 +10,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
   if (!order) return NextResponse.json({ error: 'not found' }, { status: 404 });
   return NextResponse.json({
     status: order.status,
-    pdfStatus: order.pdfStatus,
+    // PDFs are rendered per request and never retained as a managed cache.
+    pdfStatus: 'none',
     orderNumber: order.orderNumber,
     downloadsUsed: order.downloadsUsed,
     downloadLimit: order.downloadLimit,

@@ -11,7 +11,7 @@ export type Patch = (p: Partial<Biodata>) => void;
 const HEIGHTS = Array.from({ length: 56 }, (_, i) => {
   const totalIn = 48 + i; // 4 ft 0 in upwards
   const cm = Math.round(totalIn * 2.54);
-  return { value: String(cm), label: `${Math.floor(totalIn / 12)} ft ${totalIn % 12} in` };
+  return { value: String(cm), feet: Math.floor(totalIn / 12), inches: totalIn % 12 };
 });
 
 export function StepPersonal({ data, set, errors }: { data: Biodata; set: Patch; errors: Record<string, string> }) {
@@ -34,7 +34,7 @@ export function StepPersonal({ data, set, errors }: { data: Biodata; set: Patch;
         label={f('height')}
         optional={f('optional')}
         value={data.heightCm ? String(data.heightCm) : ''}
-        options={[{ value: '', label: f('none') }, ...HEIGHTS]}
+        options={[{ value: '', label: f('none') }, ...HEIGHTS.map(({ value, feet, inches }) => ({ value, label: f('heightFeetInches', { feet, inches }) }))]}
         onChange={(v) => set({ heightCm: v ? Number(v) : undefined })}
       />
       <Text label={f('religion')} optional={f('optional')} value={data.religion ?? ''} onChange={(v) => set({ religion: v })} />
@@ -47,11 +47,11 @@ export function StepPersonal({ data, set, errors }: { data: Biodata; set: Patch;
         value={data.diet ?? ''}
         options={[
           { value: '', label: f('none') },
-          { value: 'vegetarian', label: 'Vegetarian' },
-          { value: 'eggetarian', label: 'Eggetarian' },
-          { value: 'non-vegetarian', label: 'Non-vegetarian' },
-          { value: 'jain', label: 'Jain' },
-          { value: 'vegan', label: 'Vegan' }
+          { value: 'vegetarian', label: f('vegetarian') },
+          { value: 'eggetarian', label: f('eggetarian') },
+          { value: 'non-vegetarian', label: f('nonVegetarian') },
+          { value: 'jain', label: f('jain') },
+          { value: 'vegan', label: f('vegan') }
         ]}
         onChange={(v) => set({ diet: v as Biodata['diet'] })}
       />
@@ -60,7 +60,7 @@ export function StepPersonal({ data, set, errors }: { data: Biodata; set: Patch;
   );
 }
 
-export function StepWork({ data, set }: { data: Biodata; set: Patch }) {
+export function StepWork({ data, set, errors = {} }: { data: Biodata; set: Patch; errors?: Record<string, string> }) {
   const f = useTranslations('fields');
   const rows = data.education ?? [];
   const update = (i: number, patch: Partial<(typeof rows)[number]>) =>
@@ -73,7 +73,7 @@ export function StepWork({ data, set }: { data: Biodata; set: Patch }) {
           <legend className="visually-hidden">{`${f('qualification')} ${i + 1}`}</legend>
           <Text label={f('qualification')} value={row.qualification} onChange={(v) => update(i, { qualification: v })} />
           <Text label={f('institution')} optional={f('optional')} value={row.institution ?? ''} onChange={(v) => update(i, { institution: v })} />
-          <Text label={f('year')} optional={f('optional')} inputMode="numeric" maxLength={4} value={row.year ?? ''} onChange={(v) => update(i, { year: v })} />
+          <Text label={f('year')} optional={f('optional')} inputMode="numeric" maxLength={4} value={row.year ?? ''} error={errors[`education.${i}.year`]} onChange={(v) => update(i, { year: v })} />
           <button type="button" className="btn btn-outline" onClick={() => set({ education: rows.filter((_, j) => j !== i) })}>
             {f('removeRow')}
           </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { AlertIcon } from '@/components/toran';
 
 /** Form primitives. One place for the label, hint and error shape, so no
@@ -31,7 +31,7 @@ export function Text({
   inputMode?: 'text' | 'tel' | 'email' | 'numeric';
   autoComplete?: string;
 }) {
-  const id = `f-${label.replace(/\W+/g, '-').toLowerCase()}`;
+  const id = useId();
   return (
     <label className="field" style={span ? { gridColumn: '1 / -1' } : undefined} htmlFor={id}>
       {label}
@@ -77,7 +77,7 @@ export function Area({
   hint?: string;
   maxLength?: number;
 }) {
-  const id = `a-${label.replace(/\W+/g, '-').toLowerCase()}`;
+  const id = useId();
   return (
     <label className="field" style={{ gridColumn: '1 / -1' }} htmlFor={id}>
       {label}
@@ -103,7 +103,7 @@ export function Select({
   optional?: string;
   span?: boolean;
 }) {
-  const id = `s-${label.replace(/\W+/g, '-').toLowerCase()}`;
+  const id = useId();
   return (
     <label className="field" style={span ? { gridColumn: '1 / -1' } : undefined} htmlFor={id}>
       {label}

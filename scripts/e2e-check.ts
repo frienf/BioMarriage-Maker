@@ -16,6 +16,8 @@
 import assert from 'node:assert/strict';
 import { createHmac, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import { emptyBiodata } from '../src/lib/biodata.ts';
 import { attachRazorpayOrder, createOrder, eraseOrder, orderByToken, setPdfStatus } from '../src/lib/orders.ts';
 import { pdfPathFor } from '../src/lib/pdf.ts';
@@ -219,7 +221,9 @@ await step('the order status endpoint reports what the page needs', async () => 
 await step('erasure removes the details and closes every door', async () => {
   // The server and this script share STORAGE_DIR from .env.local.
   const pdf = pdfPathFor(token);
-  assert.ok(existsSync(pdf), 'the downloads should have cached a PDF');
+  assert.equal(existsSync(pdf), false, 'downloads must not write a cached PDF');
+  await mkdir(path.dirname(pdf), { recursive: true });
+  await writeFile(pdf, 'legacy cached PDF');
   const res = await fetch(`${origin}/api/orders/${token}`, { method: 'DELETE' });
   assert.equal(res.status, 200);
 

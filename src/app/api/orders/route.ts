@@ -3,6 +3,8 @@ import { biodataSchema, checkBiodata } from '@/lib/biodata';
 import { unsupportedIn } from '@/lib/glyphs';
 import { createOrder, attachRazorpayOrder } from '@/lib/orders';
 import { createRazorpayOrder, publicKeyId } from '@/lib/razorpay';
+import { validPhoto } from '@/lib/photo-validation';
+import { readEditBody } from '@/lib/order-edits';
 
 export const runtime = 'nodejs';
 
@@ -11,14 +13,13 @@ export const runtime = 'nodejs';
  * happened in the visitor's browser, which is what the privacy page promises.
  */
 export async function POST(request: Request) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
+  const input = await readEditBody(request.body);
+  if (input.kind === 'too-large') return NextResponse.json({ error: 'Request is too large.' }, { status: 413 });
+  if (input.kind === 'invalid' || !input.body || typeof input.body !== 'object' || Array.isArray(input.body)) {
     return NextResponse.json({ error: 'Send JSON.' }, { status: 400 });
   }
 
-  const payload = body as { biodata?: unknown; accent?: unknown };
+  const payload = input.body as { biodata?: unknown; accent?: unknown };
   const parsed = biodataSchema.safeParse(payload.biodata);
   if (!parsed.success) {
     return NextResponse.json(
@@ -28,6 +29,10 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data;
+
+  if (!(await validPhoto(data.photo.src))) {
+    return NextResponse.json({ error: 'Choose a valid JPEG, PNG or WebP photo.' }, { status: 400 });
+  }
 
   // The same two gates the editor applies, applied again here. The editor runs
   // on the visitor's machine, so it is a convenience, not a control.

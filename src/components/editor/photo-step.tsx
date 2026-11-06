@@ -16,7 +16,7 @@ const MAX_BYTES = 3_000_000;
  * position slider moves the face with CSS object-position, which is the same
  * property the template and the PDF use.
  */
-export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Biodata>) => void }) {
+export function PhotoStep({ data, set, paid = false, pending, onPending }: { data: Biodata; set: (p: Partial<Biodata>) => void; paid?: boolean; pending: boolean; onPending: (pending: boolean) => void }) {
   const f = useTranslations('fields');
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
@@ -26,15 +26,17 @@ export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Bioda
   async function pick(file: File) {
     setError('');
     if (!file.type.startsWith('image/')) {
-      setError('That file is not an image.');
+      setError(f('photoNotImage'));
       return;
     }
     if (file.size > 20_000_000) {
-      setError('That photo is very large. Choose one under 20 MB.');
+      setError(f('photoTooLarge'));
       return;
     }
+    onPending(true);
+    let bitmap: ImageBitmap | undefined;
     try {
-      const bitmap = await createImageBitmap(file);
+      bitmap = await createImageBitmap(file);
       const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(bitmap.width * scale);
@@ -49,12 +51,15 @@ export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Bioda
         url = canvas.toDataURL('image/jpeg', quality);
       }
       if (url.length > MAX_BYTES) {
-        setError('That photo is too large to keep on this device. Try a smaller one.');
+        setError(f('photoTooLarge'));
         return;
       }
       set({ photo: { src: url, position: data.photo?.position || '50% 30%' } });
     } catch {
-      setError('That photo could not be read. Try another one.');
+      setError(f('photoUnreadable'));
+    } finally {
+      bitmap?.close();
+      onPending(false);
     }
   }
 
@@ -92,19 +97,21 @@ export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Bioda
           type="file"
           accept="image/*"
           className="visually-hidden"
+          disabled={pending}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) void pick(file);
           }}
         />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <button type="button" className="btn btn-primary" onClick={() => input.current?.click()}>
+          <button type="button" className="btn btn-primary" disabled={pending} onClick={() => input.current?.click()}>
             {f('photoChoose')}
           </button>
           {src ? (
             <button
               type="button"
               className="btn btn-outline"
+              disabled={pending}
               onClick={() => {
                 set({ photo: { src: '', position: '50% 30%' } });
                 if (input.current) input.current.value = '';
@@ -120,6 +127,7 @@ export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Bioda
             {f('photoPosition')}
             <input
               type="range"
+              disabled={pending}
               min={0}
               max={100}
               step={5}
@@ -130,7 +138,8 @@ export function PhotoStep({ data, set }: { data: Biodata; set: (p: Partial<Bioda
           </label>
         ) : null}
 
-        <p className="hint">{f('photoHint')}</p>
+        <p role="status" aria-live="polite" className="hint">{pending ? f('photoPreparing') : ''}</p>
+        <p className="hint">{f(paid ? 'photoPaidHint' : 'photoHint')}</p>
         {error ? (
           <p className="error">
             <AlertIcon />
