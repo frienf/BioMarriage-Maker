@@ -11,6 +11,7 @@ import { templateBySlug } from '@/templates/catalog';
 import { A4, ScaledSheet, TemplateSheet } from '@/templates/render';
 import { formatINR } from '@/lib/money';
 import { AlertIcon, LockIcon } from '@/components/toran';
+import { overflowingPages } from '@/lib/paid-editor';
 
 type Checkout = new (options: Record<string, unknown>) => { open: () => void };
 declare global {
@@ -31,19 +32,42 @@ export function ReviewPay() {
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState('');
   const [scriptReady, setScriptReady] = useState(false);
-  const [overflows, setOverflows] = useState(false);
+  const [overflowPages, setOverflowPages] = useState<number[] | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const def = data ? templateBySlug(data.templateSlug) : undefined;
 
   useEffect(() => setData(loadDraft()), []);
 
   // A fixed A4 sheet clips what does not fit, and a clipped biodata loses
   // somebody's contact details silently. Measure, and refuse to sell it.
   useEffect(() => {
-    const el = sheetRef.current?.querySelector('article');
-    setOverflows(el ? el.scrollHeight > A4.h + 2 : false);
-  }, [data]);
+    const root = sheetRef.current;
+    if (!root || !def) {
+      setOverflowPages(null);
+      return;
+    }
+    const measure = () => {
+      if (document.fonts.status !== 'loaded') {
+        setOverflowPages(null);
+        return;
+      }
+      setOverflowPages(overflowingPages(root.querySelectorAll('article'), def.pages, A4.h));
+    };
+    const observer = new MutationObserver(measure);
+    observer.observe(root, { childList: true, subtree: true, characterData: true });
+    document.fonts.addEventListener('loading', measure);
+    document.fonts.addEventListener('loadingdone', measure);
+    root.addEventListener('load', measure, true);
+    measure();
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener('loading', measure);
+      document.fonts.removeEventListener('loadingdone', measure);
+      root.removeEventListener('load', measure, true);
+    };
+  }, [data, def]);
 
-  const def = data ? templateBySlug(data.templateSlug) : undefined;
+  const overflows = overflowPages !== null && overflowPages.length > 0;
   const issues = useMemo(() => (data ? checkBiodata(data) : []), [data]);
 
   async function pay() {
@@ -134,10 +158,12 @@ export function ReviewPay() {
               background: 'var(--canvas)'
             }}
           >
-            <div ref={sheetRef}>
-              <ScaledSheet width={420} shadow watermark={tc('previewStamp')}>
-                <TemplateSheet data={data} accent={def.accent} instanceId="review" />
-              </ScaledSheet>
+            <div ref={sheetRef} style={{ width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {([1, 2] as const).slice(0, def.pages).map((page) => (
+                <ScaledSheet key={page} width={420} responsive shadow watermark={tc('previewStamp')}>
+                  <TemplateSheet data={data} accent={def.accent} page={page} instanceId={`review-${page}`} />
+                </ScaledSheet>
+              ))}
             </div>
           </div>
 
@@ -182,7 +208,7 @@ export function ReviewPay() {
             <button
               type="button"
               className="btn btn-primary btn-lg"
-              disabled={!consent || busy || issues.length > 0 || overflows || !scriptReady}
+              disabled={!consent || busy || issues.length > 0 || overflowPages === null || overflows || !scriptReady}
               onClick={pay}
             >
               {busy ? t('sending') : t('pay', { price: formatINR(def.pricePaise) })}

@@ -10,13 +10,13 @@ import { PAGE, PortraitPhoto } from './base-parts';
 export function T4Template({ data, accent = '#5A3A2B' }: { data: Biodata; accent?: string }) {
   const l = labelsFor(data.docLocale);
   const b = buildSections(data);
-  // Measured: arch slot (512,127,671,373) w159 h246; carved niche/deity panel (90,65,460,330).
-  // Body starts below decorative top border (~y150); excludes left border art (~x74) and arch slot.
-  const photoSlot = { left: 512, top: 127, width: 159, height: 246, shape: 'arch' as const };
-  const bodyTop = 150, bodyBottom = 980;
+  // Remeasured visual: carved niche/deity panel (90,65,460,330); inner arch opening.
+  // Body starts below that top artwork; excludes left border art (~x74) and arch slot.
+  const photoSlot = { left: 514, top: 126, width: 157, height: 245, shape: 'arch' as const };
+  const bodyTop = 438, bodyBottom = 1000;
 
-  // Arch clip path matching the drawn stone opening (simplified arch curve)
-  const archClip = 'path("M 0 246 L 0 60 Q 79 10 159 60 L 159 246 Z")';
+  // Arch clip path matching the drawn stone opening.
+  const archClip = 'path("M 0 245 L 0 65 Q 6 40 20 38 Q 24 20 40 21 Q 49 7 63 10 Q 78 -5 93 10 Q 108 7 117 21 Q 133 20 137 38 Q 151 40 157 65 L 157 245 Z")';
 
   return (
     <article lang={data.docLocale} style={{ ...PAGE, position: 'relative', overflow: 'hidden', background: '#EAE0C8', color: '#3A2A1C', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontSize: 14, lineHeight: 1.36 }}>
@@ -34,50 +34,19 @@ export function T4Template({ data, accent = '#5A3A2B' }: { data: Biodata; accent
           {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: '#7A5C3E' }}>{b.subtitle}</p> : null}
           <div aria-hidden="true" style={{ width: 60, height: 2, background: '#C2963F', margin: '8px auto 0' }} />
         </header>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 580 }}>
-          {b.personal.rows.length ? (
-            <section>
-              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A3A2B', borderBottom: '1px solid #D8B88A', paddingBottom: 3 }}>{b.personal.title}</h2>
-              <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: '120px minmax(0,1fr)', gap: '2px 14px', fontSize: 13 }}>
-                {b.personal.rows.map((r, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: 'subgrid', gridColumn: '1 / -1' }}>
-                    <dt style={{ color: '#9B6A3E' }}>{r.l}</dt>
-                    <dd style={{ margin: 0 }}>{r.v}</dd>
-                  </div>
-                ))}
-              </dl>
+        <div style={{ columnCount: 2, columnGap: 24, maxWidth: 580 }}>
+          {b.sections.map((sec) => (
+            <section key={sec.title} style={{ marginBottom: 8 }}>
+              <h2 style={{ margin: '0 0 3px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A3A2B', borderBottom: '1px solid #D8B88A', paddingBottom: 2, breakAfter: 'avoid' }}>{sec.title}</h2>
+              {sec.text ? <p style={{ margin: 0, fontSize: 13, textWrap: 'pretty', overflowWrap: 'anywhere' }}>{sec.text}</p> : null}
+              {sec.rows.map((r, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '40% minmax(0, 1fr)', gap: 8, fontSize: 13, breakInside: 'avoid' }}>
+                  <span style={{ color: '#754523' }}>{r.l}</span>
+                  <span style={{ overflowWrap: 'anywhere' }}>{r.v}</span>
+                </div>
+              ))}
             </section>
-          ) : null}
-          {b.education.rows.length ? (
-            <section style={{ borderTop: '1px solid #D8B88A', paddingTop: 12 }}>
-              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A3A2B' }}>{b.education.title}</h2>
-              <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: '120px minmax(0,1fr)', gap: '2px 14px', fontSize: 13 }}>
-                {b.education.rows.map((r, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: 'subgrid', gridColumn: '1 / -1' }}>
-                    <dt style={{ color: '#9B6A3E' }}>{r.l}</dt><dd style={{ margin: 0 }}>{r.v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
-          {b.about.text ? (
-            <section style={{ borderTop: '1px solid #D8B88A', paddingTop: 12 }}>
-              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A3A2B' }}>{b.about.title}</h2>
-              <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.44, textWrap: 'pretty' }}>{b.about.text}</p>
-            </section>
-          ) : null}
-          {b.contact.rows.length ? (
-            <section style={{ borderTop: '1px solid #D8B88A', paddingTop: 12 }}>
-              <h2 style={{ margin: '0 0 6px', fontFamily: 'Georgia, serif', fontWeight: 600, fontSize: 16, color: '#5A3A2B' }}>{b.contact.title}</h2>
-              <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: '100px minmax(0,1fr)', gap: '2px 14px', fontSize: 12.5 }}>
-                {b.contact.rows.map((r, i) => (
-                  <div key={i} style={{ display: 'grid', gridTemplateColumns: 'subgrid', gridColumn: '1 / -1' }}>
-                    <dt style={{ color: '#9B6A3E' }}>{r.l}</dt><dd style={{ margin: 0 }}>{r.v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
+          ))}
         </div>
       </div>
     </article>

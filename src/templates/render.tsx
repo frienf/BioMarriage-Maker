@@ -11,6 +11,7 @@ import { ChitraTemplate } from './chitra';
 import { T2Template } from './t2-green-lotus';
 import { T3Template } from './t3-murugan-vel';
 import { T4Template } from './t4-stone-arch';
+import { ResponsiveSheet } from '@/components/responsive-sheet';
 
 /** A4 in CSS pixels at 96dpi. Matches --a4-w / --a4-h. */
 export const A4 = { w: 794, h: 1123 } as const;
@@ -69,23 +70,25 @@ export function ScaledSheet({
   children,
   watermark,
   shadow,
-  label
+  label,
+  responsive = false
 }: {
   width: number;
   children: React.ReactNode;
   watermark?: string;
   shadow?: boolean;
   label?: string;
+  responsive?: boolean;
 }) {
   const scale = width / A4.w;
-  return (
+  const sheet = (
     <div
       className={`sheet-frame${shadow ? ' sheet-shadow' : ''}`}
-      style={{ width, height: Math.round(A4.h * scale) }}
+      style={responsive ? { width: '100%', height: '100%' } : { width, height: Math.round(A4.h * scale) }}
       role={label ? 'img' : undefined}
       aria-label={label}
     >
-      <div className="sheet-scale" style={{ '--sheet-scale': scale } as React.CSSProperties} aria-hidden={label ? true : undefined}>
+      <div className="sheet-scale" style={responsive ? undefined : { '--sheet-scale': scale } as React.CSSProperties} aria-hidden={label ? true : undefined}>
         {children}
       </div>
       {watermark ? (
@@ -95,4 +98,5 @@ export function ScaledSheet({
       ) : null}
     </div>
   );
+  return responsive ? <ResponsiveSheet width={width}>{sheet}</ResponsiveSheet> : sheet;
 }

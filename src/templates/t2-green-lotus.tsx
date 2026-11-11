@@ -24,8 +24,8 @@ export function T2Template({ data, accent = '#145250' }: { data: Biodata; accent
       <PortraitPhoto data={data} alt={l.photoPlaceholder} width={photoSlot.width} height={photoSlot.height} tint="#F1E6D8" silhouette="#DCC8B2" style={{ position: 'absolute', left: photoSlot.left, top: photoSlot.top, borderRadius: '50%', border: `2px solid ${accent}` }} />
 
       {/* Deity figure exclusion zone (top-center) — content avoids this horizontally; content starts lower vertically */}
-      {/* Content area: full-width from y27; left content must stay right of lotus strip (~x270 sheet => min content left x230) */}
-      <div style={{ position: 'relative', padding: '36px 50px 36px 240px' }}>
+      {/* Begin below the deity and portrait; keep clear of the lotus strip. */}
+      <div style={{ position: 'relative', padding: '305px 50px 36px 240px' }}>
         <header style={{ textAlign: 'center', marginBottom: 16 }}>
           <h1 style={{ margin: '0 0 4px', fontFamily: 'Georgia, "Noto Serif Devanagari", serif', fontWeight: 400, fontSize: 28, lineHeight: 1.15, color: accent }}>{b.name}</h1>
           {b.subtitle ? <p style={{ margin: 0, fontSize: 13, color: '#5A7868' }}>{b.subtitle}</p> : null}

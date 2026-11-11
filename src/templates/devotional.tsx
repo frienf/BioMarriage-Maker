@@ -53,43 +53,71 @@ function Photo({
   round?: boolean;
   alt: string;
 }) {
-  const frame: CSSProperties = {
-    width,
-    height,
-    boxSizing: 'border-box',
-    border: `3px solid ${t.accent2}`,
-    padding: 4,
-    background: '#FFFFFF',
-    borderRadius: round ? 999 : 0,
-    flex: 'none'
-  };
-  const inner: CSSProperties = {
-    width: '100%',
-    height: '100%',
-    background: t.tint,
-    borderRadius: round ? 999 : 0,
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    overflow: 'hidden'
-  };
+  const borderRadius = round ? 999 : 0;
+  const border = `3px solid ${t.accent2}`;
+
   return (
-    <figure style={{ margin: 0, ...frame }}>
-      <div style={inner}>
-        {data.photo?.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={data.photo.src}
-            alt={alt}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%' }}
-          />
-        ) : (
-          <svg aria-hidden="true" width="70%" viewBox="0 0 120 150">
-            <circle cx="60" cy="56" r="28" fill={t.accent2} fillOpacity="0.35" />
-            <path d="M8 150 C 14 104, 36 92, 60 92 C 84 92, 106 104, 112 150 Z" fill={t.accent2} fillOpacity="0.35" />
-          </svg>
-        )}
-      </div>
+    <figure
+      style={{
+        margin: 0,
+        width,
+        height,
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        flex: 'none',
+        position: 'relative',
+        background: '#FFFFFF',
+        borderRadius,
+        padding: undefined,
+        border: undefined,
+      }}
+    >
+      {/* Tint mat behind the photo, fills the whole holder */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: t.tint,
+          borderRadius,
+          pointerEvents: 'none',
+        }}
+      />
+      {data.photo?.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={data.photo.src}
+          alt={alt}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: data.photo.position || '50% 30%',
+          }}
+        />
+      ) : (
+        <svg
+          aria-hidden="true"
+          width="70%"
+          viewBox="0 0 120 150"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        >
+          <circle cx="60" cy="56" r="28" fill={t.accent2} fillOpacity="0.35" />
+          <path d="M8 150 C 14 104, 36 92, 60 92 C 84 92, 106 104, 112 150 Z" fill={t.accent2} fillOpacity="0.35" />
+        </svg>
+      )}
+      {/* Border overlay drawn on top */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          border,
+          borderRadius,
+          boxSizing: 'border-box',
+          pointerEvents: 'none',
+        }}
+      />
     </figure>
   );
 }

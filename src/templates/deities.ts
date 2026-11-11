@@ -26,7 +26,8 @@ export const DEITY_IDS = [
   'vishnu',
   'murugan',
   'om',
-  'brahma'
+  'brahma',
+  'parvati'
 ] as const;
 
 export type DeityId = (typeof DEITY_IDS)[number];
@@ -58,7 +59,8 @@ export const DEITIES: Deity[] = [
   { id: 'vishnu', label: { en: 'Vishnu', hi: 'विष्णू', mr: 'विष्णू' }, aliases: ['narayan', 'narayana', 'padmanabha', 'sheshashayi'], order: 12 }, // hi needs native review, mr needs native review
   { id: 'murugan', label: { en: 'Murugan', hi: 'मुरुगन', mr: 'मुरुगन' }, aliases: ['kartikeya', 'subramanya', 'skanda'], order: 13 }, // hi needs native review, mr needs native review
   { id: 'om', label: { en: 'Om', hi: 'ॐ', mr: 'ॐ' }, aliases: ['aum'], order: 14 }, // hi needs native review, mr needs native review
-  { id: 'brahma', label: { en: 'Brahma', hi: 'ब्रह्मा', mr: 'ब्रह्मा' }, aliases: ['lord brahma', 'lord of creation'], order: 15 }
+  { id: 'brahma', label: { en: 'Brahma', hi: 'ब्रह्मा', mr: 'ब्रह्मा' }, aliases: ['lord brahma', 'lord of creation'], order: 15 },
+  { id: 'parvati', label: { en: 'Parvati', hi: 'पार्वती', mr: 'पार्वती' }, aliases: ['gauri', 'umai', 'himani', 'shakti'], order: 16 }
 ];
 
 // Parents: balaji, krishna and ram under vishnu; vitthal under krishna; khandoba under shiva.
@@ -83,7 +85,8 @@ export const MOTIF_DEITY: Partial<Record<Motif, DeityId>> = {
   narayan: 'vishnu',
   shankha: 'vishnu',
   murugan: 'murugan',
-  brahma: 'brahma'
+  brahma: 'brahma',
+  parvati: 'parvati'
 };
 
 const DEITY_BY_ID: Record<DeityId, Deity> = Object.fromEntries(DEITIES.map((d) => [d.id, d])) as Record<DeityId, Deity>;

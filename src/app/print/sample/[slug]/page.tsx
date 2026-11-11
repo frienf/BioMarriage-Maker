@@ -4,6 +4,7 @@ import { DOC_LOCALES } from '@/lib/biodata';
 import { templateBySlug } from '@/templates/catalog';
 import { TemplateSheet } from '@/templates/render';
 import { sampleFor } from '@/templates/sample';
+import { withGalleryPhoto } from '@/templates/gallery-sample';
 import { frameDataUri } from '@/templates/chitra-art';
 import { PrintReady } from '../../[token]/print-ready';
 
@@ -27,19 +28,20 @@ export default async function SamplePrintPage({
   searchParams
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ lang?: string; accent?: string; photo?: string }>;
+  searchParams: Promise<{ lang?: string; accent?: string; photo?: string; galleryPhoto?: string }>;
 }) {
   if (process.env.NODE_ENV === 'production') notFound();
 
   const { slug } = await params;
-  const { lang, accent, photo } = await searchParams;
+  const { lang, accent, photo, galleryPhoto } = await searchParams;
   const def = templateBySlug(slug);
   if (!def) notFound();
 
   const locale: DocLocale = (DOC_LOCALES as readonly string[]).includes(lang ?? '')
     ? (lang as DocLocale)
     : def.docLocales[0];
-  const data = { ...sampleFor(def.slug, locale), templateSlug: def.slug };
+  const sample = { ...sampleFor(def.slug, locale), templateSlug: def.slug };
+  const data = galleryPhoto === '1' ? withGalleryPhoto(sample) : sample;
   if (photo === '1') data.photo = { src: TEST_PHOTO, position: '50% 50%' };
   const pages: Array<1 | 2> = def.pages === 2 ? [1, 2] : [1];
   const ink = accent && /^[0-9a-fA-F]{6}$/.test(accent) ? `#${accent}` : def.accent;

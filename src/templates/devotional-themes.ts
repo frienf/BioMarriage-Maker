@@ -485,5 +485,28 @@ export const DEV_THEMES: Record<Motif, DevTheme> = {
     invLang: 'sa',
     invFont: `var(--font-vesper), ${SERIF}`,
     tileOpacity: 0.11
+  },
+  // Parvati (new chitra frame, layout chitra). Fonts reuse the Durga classical
+  // pairing (Rozha head / Martel body, both serif) — no new font file. Invocation
+  // owner to confirm: ॥ ॐ पार्वत्यै नमः ॥ (alternative ॥ ॐ गौर्यै नमः ॥).
+  // Colours sampled from the art: paper #F6F0E2 (cream field), accent #7A5634
+  // (deep gold from border/figure, 5.52:1 vs paper), rule #C6A56F, ink #221300
+  // (deep warm brown, 15.2:1 vs paper). tileOpacity 0.11. No figure, no twoPage.
+  parvati: {
+    motif: 'parvati',
+    layout: 'classic',
+    accent: '#7A5634',
+    accent2: '#C6A56F',
+    ink: '#221300',
+    label: '#5A4A32',
+    paper: '#F6F0E2',
+    tint: '#F3EBD4',
+    head: `var(--font-rozha), ${SERIF}`,
+    headWeight: 700,
+    body: `var(--font-martel), ${SERIF}`,
+    invocation: '॥ ॐ पार्वत्यै नमः ॥',
+    invLang: 'sa',
+    invFont: `var(--font-rozha), ${SERIF}`,
+    tileOpacity: 0.11
   }
 };

@@ -51,3 +51,8 @@ test('support response time is stated in each locale', () => {
     assert.doesNotMatch(load(locale).contact.hours, /[\[\]]/, `${locale} response time is still a placeholder`);
   }
 });
+
+test('overflow warning does not promise automatic pagination', () => {
+  assert.doesNotMatch(load('en').editor.mayOverflow, /will continue onto a second sheet/i);
+  assert.match(load('en').editor.mayOverflow, /shorten/i);
+});

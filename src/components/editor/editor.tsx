@@ -9,7 +9,7 @@ import type { Biodata, DocLocale } from '@/lib/biodata';
 import { biodataSchema, checkBiodata, emptyBiodata } from '@/lib/biodata';
 import { unsupportedIn } from '@/lib/glyphs';
 import { clearDraft, loadDraft, saveDraft } from '@/lib/draft';
-import { TEMPLATES, templateBySlug } from '@/templates/catalog';
+import { TEMPLATES, templateBySlug, templatesForEditor } from '@/templates/catalog';
 import { A4, ScaledSheet, TemplateSheet } from '@/templates/render';
 import { sampleFor } from '@/templates/sample';
 import { formatINR } from '@/lib/money';
@@ -392,7 +392,7 @@ export function Editor({ initialSlug, useSample, paid }: { initialSlug: string; 
                   set({ templateSlug: slug, docLocale });
                 }}
               >
-                {TEMPLATES.filter((x) => !paid || allowedTemplate(x, paid.templateSlug, paid.pricePaise)).map((x) => (
+                {templatesForEditor(data.templateSlug, paid?.templateSlug).filter((x) => !paid || allowedTemplate(x, paid.templateSlug, paid.pricePaise)).map((x) => (
                   <option key={x.slug} value={x.slug}>
                     {x.title}, {formatINR(x.pricePaise)}
                   </option>
@@ -411,11 +411,11 @@ export function Editor({ initialSlug, useSample, paid }: { initialSlug: string; 
             </label>
           </div>
 
-          <div ref={sheetRef} onLoadCapture={() => setOverflowPages(measurePages())} style={{ alignSelf: 'center', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div ref={sheetRef} onLoadCapture={() => setOverflowPages(measurePages())} style={{ alignSelf: 'center', width: '100%', maxWidth: 445, display: 'flex', flexDirection: 'column', gap: 14 }}>
             {([1, 2] as const).slice(0, def.pages).map((page) => (
               <div key={page} style={{ maxWidth: '100%' }}>
                 {def.pages > 1 && <p className="small muted">{t('previewPage', { page, total: def.pages })}</p>}
-                <ScaledSheet width={445} shadow watermark={tc('previewStamp')}>
+                <ScaledSheet width={445} responsive shadow watermark={tc('previewStamp')}>
                   <TemplateSheet data={data} accent={def.accent} page={page} instanceId={`editor-${page}`} />
                 </ScaledSheet>
               </div>

@@ -1,8 +1,9 @@
 import type { Biodata } from '@/lib/biodata';
 import { buildSections } from './rows';
-import { PAGE } from './base-parts';
+import { PAGE, PortraitPhoto } from './base-parts';
+import { labelsFor } from './labels';
 
-/** Saral (Minimal): no frame, no photo, no ornament. Light weights and one
+/** Saral (Minimal): no frame or ornament, with an optional portrait. Light weights and one
  *  hairline rule per section. It is the proof that the field model degrades
  *  gracefully when a family fills in almost nothing. */
 
@@ -32,10 +33,13 @@ export function SaralTemplate({ data, accent = '#4E6853' }: { data: Biodata; acc
         gap: 12
       }}
     >
-      <header style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <h1 style={{ margin: 0, fontWeight: 300, fontSize: 34, lineHeight: 1.1, letterSpacing: '-0.5px' }}>{b.name}</h1>
-        {b.subtitle ? <p style={{ margin: 0, color: accent, fontSize: 16 }}>{b.subtitle}</p> : null}
-        <div aria-hidden="true" style={{ width: 56, height: 2, background: accent, marginTop: 4 }} />
+      <header style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 }}>
+          <h1 style={{ margin: 0, fontWeight: 300, fontSize: 34, lineHeight: 1.1, letterSpacing: '-0.5px' }}>{b.name}</h1>
+          {b.subtitle ? <p style={{ margin: 0, color: accent, fontSize: 16 }}>{b.subtitle}</p> : null}
+          <div aria-hidden="true" style={{ width: 56, height: 2, background: accent, marginTop: 4 }} />
+        </div>
+        {data.photo?.src ? <PortraitPhoto data={data} alt={labelsFor(data.docLocale).photoPlaceholder} width={84} height={100} tint="#F7F4EC" silhouette="#DCD8CC" /> : null}
       </header>
 
       {blocks.map((sec, i) => (

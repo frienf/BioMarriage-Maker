@@ -77,7 +77,7 @@ export const SWATCHES: Record<LayoutKind, Swatch[]> = {
 
 const ALL: DocLocale[] = ['en', 'hi', 'mr'];
 
-export const TEMPLATES: TemplateDef[] = [
+const ALL_TEMPLATES: TemplateDef[] = [
   // Traditional
   { slug: 'kumkum', title: 'Kumkum', collection: 'traditional', layout: 'kumkum', accent: '#7B1E2B', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
     blurb: 'A double-ruled frame with gold corner diamonds and centred headings. An optional Ganesha invocation sits above the name.' },
@@ -302,10 +302,68 @@ export const TEMPLATES: TemplateDef[] = [
   // details, and a thin double rose-gold border with corner triangles.
   { slug: 'kamadeva', title: 'Kamadeva', collection: 'devotional', layout: 'chitra', motif: 'kamadeva', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: Kamadeva (love god) has no deity category in the catalogue yet
     blurb: 'Soft cream chamfered card with a thin double rose-gold border, the crossed sugarcane bow and arrows of Kamadeva at the head, a chamfered frame for the portrait, and a faint Sri Yantra behind the details.' },
+  // Balaji Namam (new chitra frame): cream field framed by tall stone temple
+  // pillars, the classic Shankha–Namam–Chakra triad at the head, an ornate
+  // gold circular frame on a lotus pedestal for the portrait, and a faint
+  // Balaji face with crown behind the details. Distinct from 'balaji'
+  // (devotional layout, light field, simple shankh/chakra border, no photo
+  // frame) and 'sudarshana' (dark charcoal field, gold U-mark border, arched
+  // temple frame, Sudarshana Chakra watermark).
+  { slug: 'balaji-namam', title: 'Balaji Namam', collection: 'devotional', layout: 'chitra', motif: 'balaji', deities: ['balaji'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Cream field framed by stone temple pillars, the classic Shankha–Namam–Chakra triad at the head, an ornate gold circular frame on a lotus pedestal for the portrait, and a faint Balaji face with crown behind the details.' },
+  // Jagannath Dark (new chitra frame, devotional): Lord Jagannath of Puri in
+  // gold line art on a deep charcoal field — distinct from the red-and-gold
+  // floral 'jagannath' and the sandstone 'jagannath-mandir'. Geometric gold
+  // Art-Deco border with corner and mid-side stars, lotus medallion, a
+  // chamfered gold portrait frame with a dotted bead border, and a large
+  // faint chariot wheel behind the details. Sparkle removed; art scaled 1.7454.
+  { slug: 'jagannath-dark', title: 'Jagannath Dark', collection: 'devotional', layout: 'chitra', motif: 'jagannath', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: new motif, no specific deity entry
+    blurb: 'A deep charcoal page inside a geometric gold Art-Deco border with corner stars, Lord Jagannath’s gold line-art face in a lotus medallion at the head, a chamfered gold portrait frame with a dotted bead border, and a large faint chariot wheel behind the details.' },
+  // Durga Yantra (new chitra frame, R11): soft cream field inside a thin gold double border with
+  // stepped Art-Deco corners, dark charcoal geometric side and corner panels with gold lotus
+  // motifs, Goddess Durga’s face (third eye, crown, tilak) at the head, a chamfered gold
+  // portrait frame at the top right, and a large faint lotus-yantra with central hexagram
+  // behind the details. Distinct from 'durga-trishul' (torn maroon panel, golden Trishul,
+  // ornate oval frame) and 'durga' (red hibiscus borders, Navratri kalash watermark).
+  { slug: 'durga-yantra', title: 'Durga Yantra', collection: 'devotional', layout: 'chitra', motif: 'durga', deities: ['durga'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Cream field framed by dark geometric panels and gold lotus motifs, Goddess Durga’s face at the head, a chamfered gold frame for the portrait, and a faint lotus-yantra with central hexagram behind the details.' },
+  // Parvati (new chitra frame): cream field inside a rich gold lotus-vine border with a thin
+  // maroon inner rule, Goddess Parvati with crescent moon and lotus at the head, an oval
+  // gold frame topped with lotus and crescent for the portrait top-right, and a faint Sri
+  // Yantra inside a multi-layered lotus behind the details. Distinct from durga-yantra
+  // (dark geometric panels, Durga's face, chamfered frame) and from saraswati (seated
+  // figure with veena, swan corners, octagonal frame).
+  { slug: 'parvati', title: 'Parvati', collection: 'devotional', layout: 'chitra', motif: 'parvati', deities: ['parvati'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Cream field inside a rich gold lotus-vine border with maroon inner rule, Goddess Parvati with crescent moon and lotus at the head, an oval frame topped with lotus and crescent for the portrait, and a faint Sri Yantra in a lotus behind the details.' },
+  // Lakshmi Padma Cream (new chitra frame, new slug for the cream/sage arch
+  // design): resolved from the brief's colliding 'lakshmi-padma' — that slug
+  // already belongs to the teal-and-pink lotus-vine design (image_404a553f),
+  // which stays untouched. Soft minimal padma style: cream field, sage-and-
+  // gold border, seated Lakshmi on lotus, cusped arch, geometric lotus.
+  { slug: 'lakshmi-padma-cream', title: 'Lakshmi Padma', collection: 'devotional', layout: 'chitra', motif: 'lakshmi', deities: ['lakshmi'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Soft cream field with a sage-and-gold lotus-corner border, Goddess Lakshmi seated on a lotus at the head, a cusped gold arch for the portrait, and a large faint geometric lotus behind the details.' },
+  // Jagannath Soft (new chitra frame, devotional): Lord Jagannath of Puri in
+  // fine gold line art on a soft cream field — distinct from the red-and-gold
+  // floral 'jagannath' (filled face), the sandstone 'jagannath-mandir'
+  // (carved stone, elephant frieze) and the charcoal 'jagannath-dark'
+  // (dark field, chariot wheel). Thin gold + navy chamfered border with
+  // medallion stars in the corners, chamfered gold portrait frame, and a
+  // large faint classic Jagannath face watermark. Sparkle removed; art
+  // scaled 1506/864.
+  { slug: 'jagannath-soft', title: 'Jagannath Soft', collection: 'devotional', layout: 'chitra', motif: 'jagannath', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: new motif, no specific deity entry
+    blurb: 'Soft cream field inside a thin gold and navy chamfered border with corner stars, Lord Jagannath’s fine gold line-art face at the head, a chamfered gold frame for the portrait, and a large faint classic Jagannath face behind the details.' },
 ];
 
+// Retain legacy entries for saved drafts and paid orders without listing duplicates.
+const LEGACY_DUPLICATES = new Set(['t2-green-lotus', 't3-murugan-vel']);
+export const TEMPLATES = ALL_TEMPLATES.filter((t) => !LEGACY_DUPLICATES.has(t.slug));
+
 export function templateBySlug(slug: string): TemplateDef | undefined {
-  return TEMPLATES.find((t) => t.slug === slug);
+  return ALL_TEMPLATES.find((t) => t.slug === slug);
+}
+
+export function templatesForEditor(currentSlug: string, originalSlug?: string): TemplateDef[] {
+  return ALL_TEMPLATES.filter((t) => !LEGACY_DUPLICATES.has(t.slug) || t.slug === currentSlug || t.slug === originalSlug);
 }
 
 export function templatesInCollection(c: Collection): TemplateDef[] {

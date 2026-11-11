@@ -105,7 +105,7 @@
     "preview": "Live preview",
     "template": "Template",
     "fitsOnePage": "Fits on one page",
-    "mayOverflow": "This is longer than one page and will continue onto a second sheet.",
+    "mayOverflow": "The details do not fit on the available pages. Please shorten them before paying.",
     "back": "Back",
     "next": "Continue",
     "toReview": "Review and pay",

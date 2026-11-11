@@ -2,6 +2,7 @@ import { Link } from '@/i18n/navigation';
 import { formatINR } from '@/lib/money';
 import type { DocLocale } from '@/lib/biodata';
 import { sampleFor } from '@/templates/sample';
+import { withGalleryPhoto } from '@/templates/gallery-sample';
 import { ScaledSheet, TemplateSheet } from '@/templates/render';
 import type { TemplateDef } from '@/templates/catalog';
 import { primaryDeity } from '@/templates/deities';
@@ -13,7 +14,7 @@ const LANG_NAMES: Record<DocLocale, string> = { en: 'English', hi: 'हिन्
  *  fictional sample details, so what you click is what you get. */
 export function TemplateCard({ def, collectionLabel, locale }: { def: TemplateDef; collectionLabel: string; locale?: string }) {
   const previewLocale = def.docLocales[0];
-  const data = { ...sampleFor(def.slug, previewLocale), templateSlug: def.slug };
+  const data = withGalleryPhoto({ ...sampleFor(def.slug, previewLocale), templateSlug: def.slug });
 
   return (
     <Link

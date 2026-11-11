@@ -17,6 +17,8 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('pricing');
+  const gallery = await getTranslations('gallery');
+  const home = await getTranslations('home');
 
   // Tiers come from the catalogue, so a repriced template cannot leave this
   // page quietly wrong.
@@ -42,7 +44,8 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
             <div key={tier.paise} className={`card${i === 1 ? ' card-selected' : ''}`} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <p style={{ fontSize: 18, fontWeight: 600 }}>{tier.label}</p>
               <p style={{ fontFamily: 'var(--font-display)', fontSize: 44, fontWeight: 600, lineHeight: 1.1 }}>{formatINR(tier.paise)}</p>
-              <p className="muted small">{tier.titles.join(', ')}</p>
+              <p className="muted small">{gallery('count', { count: tier.titles.length })}</p>
+              <p className="muted small">{tier.titles.slice(0, 3).join(', ')}{tier.titles.length > 3 ? '…' : ''}</p>
             </div>
           ))}
         </div>
@@ -85,7 +88,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
         </section>
 
         <Link href="/templates" className="btn btn-primary btn-lg" style={{ alignSelf: 'start' }}>
-          {t('title')}
+          {home('ctaSecondary')}
         </Link>
       </main>
       <SiteFooter />

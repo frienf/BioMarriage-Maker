@@ -67,7 +67,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
           colourLabel={t('colour', { name: '{name}' })}
           caption={t('shownWith', { page: 1, pages: def.pages })}
           previews={pickerSwatches.map((s) => (
-            <ScaledSheet key={s.hex} width={492} shadow label={`${def.title} preview`}>
+            <ScaledSheet key={s.hex} width={492} responsive shadow label={`${def.title} preview`}>
               <TemplateSheet data={data} accent={s.hex} instanceId={`detail-${def.slug}`} />
             </ScaledSheet>
           ))}

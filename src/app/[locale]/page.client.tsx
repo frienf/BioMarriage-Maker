@@ -3,7 +3,8 @@
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FadeIn, StaggeredFadeIn, SlideIn } from '@/components/animations';
-import { HoverScale, HoverLift } from '@/components/animations/HoverScale';
+import { HoverLift } from '@/components/animations/HoverScale';
+import { StyleLinks } from '@/components/style-links';
 import { ToranFieldCanvas } from '@/components/animations';
 
 import { ScaledSheet, TemplateSheet } from '@/templates/render';
@@ -96,8 +97,8 @@ export function HomePageAnimations({
             }}
           >
             {/* Left side - text content with staggered entrance */}
-            <StaggeredFadeIn staggerDelay={0.12} className="flex flex-col gap-7">
-              <FadeIn delay={0.1} style={{ marginBottom: -8 }}>
+            <StaggeredFadeIn staggerDelay={0.12} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <FadeIn delay={0.1}>
                 <h1 id="hero-title" className="hero-title">
                   {t('title')}
                 </h1>
@@ -245,30 +246,12 @@ export function HomePageAnimations({
               </Link>
             </FadeIn>
           </div>
-          <StaggeredFadeIn staggerDelay={0.08} className="grid-2">
-            {STYLE_CARDS.slice(0, 4).map((c) => (
-              <div key={c.titleKey} className="template-card" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16, borderRadius: 'var(--r-card)', border: '1px solid var(--line)', background: 'var(--paper)', minWidth: 0, position: 'relative', overflow: 'hidden' }}>
-                <FadeIn>
-                  <Link href={`/templates/${c.slug}`} style={{ display: 'block', width: '100%', maxWidth: 200, margin: '0 auto', borderRadius: 4, border: '1px solid var(--line)', textDecoration: 'none', cursor: 'zoom-in', position: 'relative', zIndex: 1, overflow: 'visible' }}>
-                    <HoverScale scale={1.08} tapScale={0.98} hoverDuration={0.25} style={{ display: 'block', transformOrigin: 'center center' }}>
-                      {sheet(c.slug, c.locale, 160)}
-                    </HoverScale>
-                  </Link>
-                </FadeIn>
-                <FadeIn delay={0.06}>
-                  <h3 style={{ fontSize: 16, fontWeight: 600, textAlign: 'center', margin: 0 }}>{c.titleKey}</h3>
-                </FadeIn>
-                <FadeIn delay={0.1}>
-                  <p className="muted small" style={{ textAlign: 'center', margin: 0, lineHeight: 1.4 }}>{STYLE_BLURBS[c.titleKey]}</p>
-                </FadeIn>
-                <FadeIn delay={0.12}>
-                  <Link href={`/templates/${c.slug}`} className="btn btn-outline-brand" style={{ minHeight: 40, fontSize: 14, width: '100%', justifyContent: 'center' }}>
-                    Use this template
-                  </Link>
-                </FadeIn>
-              </div>
-            ))}
-          </StaggeredFadeIn>
+          <StyleLinks items={STYLE_CARDS.slice(0, 4).map((c) => ({
+            slug: c.slug,
+            title: c.titleKey,
+            description: STYLE_BLURBS[c.titleKey],
+            preview: sheet(c.slug, c.locale, 176)
+          }))} />
         </section>
 
         {/* Privacy section */}
@@ -355,9 +338,9 @@ export function HomePageAnimations({
               </h2>
             </SlideIn>
             <SlideIn direction="right" delay={0.1}>
-              <SlideIn direction="left" className="btn btn-accent btn-lg">
+              <Link href="/templates" className="btn btn-accent btn-lg">
                 {t('ctaPrimary')}
-              </SlideIn>
+              </Link>
             </SlideIn>
           </div>
         </section>

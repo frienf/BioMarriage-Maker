@@ -46,7 +46,7 @@ export function ColourPicker({
             alternative, unmounting the old sheet and mounting a fresh A4, costs
             a few hundred milliseconds before anything appears, and a colour
             swatch has to answer immediately. */}
-        <div className="crossfade">
+        <div className="crossfade" style={{ width: '100%', maxWidth: 492 }}>
           {previews.map((node, i) => (
             <div key={i} aria-hidden={i !== index}>
               {node}

@@ -37,6 +37,13 @@ export type ChitraFrame = {
   containHeader?: boolean;
   /** A white plate behind the kicker and name, sized to the bar the prep script painted out. */
   plate?: { w: number; h: number; fill: string };
+  /** Header text alignment: 'center' (default) or 'left'. Used when a photo
+   *  slot sits to the right of the header zone and centred text would collide
+   *  with it. */
+  headerAlign?: 'center' | 'left';
+  /** Max width of the header plate/name box, in CSS px. Limits how far the
+   *  centred or left-aligned header can extend toward a right-side photo slot. */
+  headerMaxWidth?: number;
 };
 
 export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
@@ -67,7 +74,11 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
       path: 'M0 270 L0 66 Q1 54 19 50 L22 46 Q50 14 95 0 Q140 14 168 46 L171 50 Q189 54 190 66 L190 270 Z'
     },
     size: 14,
-    plate: { w: 349, h: 49, fill: '#FFFFFF' }
+    plate: { w: 349, h: 49, fill: '#FFFFFF' },
+    // Centre-aligned name plate would collide with the right-side photo slot
+    // (slot x=504, text left=62, clearance 30). Left-align and cap width.
+    headerAlign: 'left',
+    headerMaxWidth: 504 - 62 - 30
   },
   // No border, only lotus vines in three corners: the box ends 14px above the
   // first lotus of the two bottom vines (y 840), whose bare stems run outside it.
@@ -144,8 +155,8 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
   gajalakshmi: {
     motif: 'lakshmi',
     paper: '#F6F3E6', accent: '#7A1F22', rule: '#B8892E', ink: '#2B1416',
-    text: { top: 340, right: 70, bottom: 120, left: 70 },
-    slot: { x: 550, y: 100, w: 150, h: 200, shape: 'rect' },
+    text: { top: 344, right: 105, bottom: 120, left: 105 },
+    slot: { x: 534, y: 130, w: 139, h: 184, shape: 'rect' },
     size: 14
   },
 
@@ -154,10 +165,10 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
   vithoba: {
     motif: 'vitthal',
     paper: '#F4EDDA', accent: '#1F4A3A', rule: '#B8964A', ink: '#1E2A22',
-    text: { top: 340, right: 70, bottom: 120, left: 70 },
+    text: { top: 351, right: 70, bottom: 120, left: 70 },
     slot: {
-      x: 540, y: 100, w: 160, h: 200, shape: 'path',
-      path: 'M0 200 L0 50 Q1 30 25 20 L30 15 Q80 0 130 15 Q155 30 159 50 L159 200 Z'
+      x: 548, y: 125, w: 145, h: 195, shape: 'path',
+      path: 'M0 195 L0 48 Q1 29 23 19 L27 14 Q73 0 118 14 Q141 29 145 48 L145 195 Z'
     },
     size: 14
   },
@@ -168,27 +179,60 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
   'sankat-mochan': {
     motif: 'hanuman',
     paper: '#F7EBCE', accent: '#8A3B12', rule: '#B5652E', ink: '#2B1A0C',
-    text: { top: 340, right: 80, bottom: 100, left: 80 },
-    slot: { x: 555, y: 110, w: 150, h: 195, shape: 'rect' },
+    text: { top: 392, right: 80, bottom: 100, left: 80 },
+    slot: { x: 588, y: 165, w: 153, h: 197, shape: 'rect' },
     size: 14
   },
 
-  // Vishnu reclining on Shesha (Sheshashayi). Burnt parchment, gold carved border
-  // with lotus buds, gold naga emblem at head, oval photo opening top-right,
-  // faint Vishnu watermark behind details. Sparkle removed; border rebuilt.
+  // Vishnu reclining on Shesha (Sheshashayi). Burnt torn-edge parchment on white,
+  // carved gold-and-brown wave scroll with inward lotus buds, gold five-hooded
+  // naga over a lotus at the head, oval photo opening top-right under a jewelled
+  // cobra crown with a looped snake tail below, faint Vishnu-on-Shesha watermark
+  // in the middle. Source image_f627742.jpg (896 x 1200, ratio 0.7467, +5.6% off
+  // A4). Generator sparkle (four-point logo, bottom-right ~x 838, y 1140 source)
+  // painted out by mirroring the bottom-left corner with feathering; border
+  // corner rebuilt underneath. Canvas extended with pure white to A4 ratio
+  // (~33px top/bottom at source scale), then uniform Lanczos scale 1506/896 to
+  // 1506 x 2017 centred on a 1588 x 2246 white canvas (~20.5 CSS px sides,
+  // ~57 CSS px top/bottom). Light unsharp mask; upscaled, not sharper.
+  // Slot = inside of the drawn oval rim, measured on the print copy at 4x zoom
+  // (2 print px = 1 CSS px): opening print x≈1160-1350, y≈390-630 -> CSS
+  // x≈580, y≈195, w≈95, h≈120. The cobra crown reaches above the opening and
+  // the snake tail reaches below it; the slot covers the inner rim only.
+  // Moulding 30 = largest reach of the drawn frame toward the text (below and
+  // left of the opening), measured at 4x zoom; the snake tail bottom is the
+  // governing reach.
+  // Strategy B (Strategy A fails npm run fit on the maximum load: en overflows
+  // by ~133px at size 14). Text box starts below the naga emblem (emblem tail
+  // bottom at CSS y≈284; text.top=295 gives 11px clearance) and lets slotSpacer
+  // clear the oval. Head (invocation, kicker, name) centres under the emblem in
+  // the width left of the float; body (clear: both) starts below the float.
+  // slot bottom + clearance = 315 + 46 = 361 > text.top (295) so spacer is
+  // non-null: {w: 155, h: 66}. slot.x - clearance - text.left = 580-46-108 =
+  // 426px >= 300px floor beside the photo.
+  // Text box clears innermost bud tips + 8px: left bud tip at CSS x≈94-100
+  // (text.left=108), right bud tip at CSS x≈697-701 (text.right=105), bottom
+  // bud tip at CSS y≈980-996 (text.bottom=140; box bottom at CSS y=983, 8-16px
+  // clear of the highest bud at y≈980).
+  // Colours sampled from the art: paper #F0DFB5, accent #7A5A1E (4.79:1 vs
+  // paper), rule #C2A25A, ink #2B2116 (11.4:1 vs paper). No new colours.
+  // Size 13 (repo floor; fit evidence shows it is needed for the maximum load
+  // in en/hi/mr). Line height 1.18, name 26px, section margin 3px — scoped in
+  // chitra.tsx following the annapurna/kamadeva/balaji-namam/jagannath-dark
+  // pattern.
   sheshashayi: {
     motif: 'narayan',
     paper: '#F0DFB5', accent: '#7A5A1E', rule: '#C2A25A', ink: '#2B2116',
-    text: { top: 380, right: 78, bottom: 92, left: 78 },
-    slot: { x: 542, y: 108, w: 154, h: 202, shape: 'oval' },
+    text: { top: 295, right: 105, bottom: 140, left: 108 },
+    slot: { x: 580, y: 195, w: 95, h: 120, shape: 'oval' },
     moulding: 30,
-    size: 14
+    size: 13
   },
   't1-lakshmi-elephants': {
     motif: 'lakshmi',
     paper: '#F5F2EA', accent: '#8A5A2A', rule: '#8A5A2A', ink: '#3A2418',
-    text: { top: 390, right: 70, bottom: 100, left: 70 },
-    slot: { x: 545, y: 155, w: 160, h: 160, shape: 'oval' },
+    text: { top: 390, right: 110, bottom: 100, left: 110 },
+    slot: { x: 503, y: 180, w: 152, h: 159, shape: 'oval' },
     moulding: 28,
     size: 14
   },
@@ -212,9 +256,9 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
   'murugan-vel': {
     motif: 'murugan',
     paper: '#F2E6C9', accent: '#8A5A30', rule: '#C2A25A', ink: '#2B2116',
-    text: { top: 260, right: 78, bottom: 78, left: 78 },
+    text: { top: 290, right: 78, bottom: 78, left: 78 },
     slot: { x: 540, y: 160, w: 142, h: 186, shape: 'rect' },
-    moulding: 14,
+    moulding: 28,
     size: 14
   },
 
@@ -226,8 +270,8 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
   'padma-shankha': {
     motif: 'shankha',
     paper: '#FFFEF9', accent: '#9A5A20', rule: '#C2A25A', ink: '#2B2116',
-    text: { top: 350, right: 70, bottom: 100, left: 78 },
-    slot: { x: 555, y: 100, w: 165, h: 215, shape: 'rect' },
+    text: { top: 350, right: 70, bottom: 100, left: 190 },
+    slot: { x: 584, y: 55, w: 163, h: 212, shape: 'rect' },
     moulding: 12,
     size: 14
   },
@@ -238,7 +282,7 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     rule: '#C2A25A',
     ink: '#2B2116',
     text: { top: 340, right: 78, bottom: 92, left: 78 },
-    slot: { x: 560, y: 100, w: 140, h: 140, shape: 'oval' },
+    slot: { x: 552, y: 150, w: 141, h: 142, shape: 'oval' },
     moulding: 30,
     size: 14
   },
@@ -277,7 +321,11 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     ink: '#2A1A10',
     text: { top: 296, right: 74, bottom: 39, left: 75 },
     slot: { x: 500, y: 117, w: 183, h: 248, shape: 'rect' },
-    size: 14
+    size: 14,
+    // Centre-aligned name collides with the right-side photo slot
+    // (slot x=500, text left=75, clearance 30).
+    headerAlign: 'left',
+    headerMaxWidth: 500 - 75 - 30
   },
   // Lakshmi Padma (new): Goddess Lakshmi seated on a lotus in golden linework,
   // rich left-side lotus vine in teal and pink, circular lotus-petal portrait frame
@@ -292,7 +340,7 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#A05A2C',
     rule: '#A05A2C',
     ink: '#2B2116',
-    text: { top: 290, right: 78, bottom: 100, left: 78 },
+    text: { top: 290, right: 55, bottom: 100, left: 270 },
     slot: { x: 560, y: 100, w: 140, h: 140, shape: 'oval' },
     moulding: 28,
     size: 14
@@ -316,8 +364,8 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#9A4825',
     rule: '#8B4A2E',
     ink: '#2B2116',
-    text: { top: 315, right: 78, bottom: 92, left: 78 },
-    slot: { x: 545, y: 115, w: 150, h: 150, shape: 'oval' },
+    text: { top: 315, right: 152, bottom: 92, left: 152 },
+    slot: { x: 574, y: 62, w: 168, h: 168, shape: 'oval' },
     moulding: 26,
     size: 14
   },
@@ -331,10 +379,10 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#9A5A20',
     rule: '#B8964A',
     ink: '#2B2116',
-    text: { top: 340, right: 78, bottom: 92, left: 78 },
+    text: { top: 364, right: 90, bottom: 92, left: 90 },
     slot: {
-      x: 540, y: 100, w: 160, h: 210, shape: 'path',
-      path: 'M 20 210 L 20 30 L 60 10 L 100 10 L 140 30 L 140 190 L 100 210 L 60 210 L 20 210 Z'
+      x: 554, y: 103, w: 165, h: 231, shape: 'path',
+      path: 'M 28 0 L 137 0 L 165 28 L 165 203 L 137 231 L 28 231 L 0 203 L 0 28 Z'
     },
     moulding: 14,
     size: 14
@@ -349,10 +397,10 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#8A6A18',
     rule: '#C2A25A',
     ink: '#2B2116',
-    text: { top: 345, right: 78, bottom: 92, left: 78 },
+    text: { top: 387, right: 78, bottom: 92, left: 78 },
     slot: {
-      x: 545, y: 105, w: 155, h: 210, shape: 'path',
-      path: 'M 10 210 L 10 40 L 45 12 L 110 12 L 145 40 L 145 210 L 110 210 L 45 210 Z'
+      x: 514, y: 111, w: 178, h: 246, shape: 'path',
+      path: 'M 34 0 L 144 0 L 178 34 L 178 212 L 144 246 L 34 246 L 0 212 L 0 34 Z'
     },
     moulding: 14,
     size: 14
@@ -374,7 +422,7 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#9A5A20',
     rule: '#9A6A2A',
     ink: '#2B2116',
-    text: { top: 490, right: 78, bottom: 52, left: 78 },
+    text: { top: 490, right: 120, bottom: 52, left: 120 },
     slot: { x: 330, y: 211, w: 135, h: 189, shape: 'rect' },
     moulding: 73,
     size: 13
@@ -385,8 +433,9 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#7A5A1E',
     rule: '#B8964A',
     ink: '#2B2116',
-    text: { top: 360, right: 78, bottom: 92, left: 70 },
-    slot: { x: 420, y: 240, w: 300, h: 280, shape: 'rect' },
+    text: { top: 420, right: 78, bottom: 92, left: 70 },
+    slot: { x: 318, y: 183, w: 159, h: 204, shape: 'path',
+      path: 'M 25 0 L 134 0 L 134 16 L 159 16 L 159 188 L 134 188 L 134 204 L 25 204 L 25 188 L 0 188 L 0 16 L 25 16 Z' },
     moulding: 14,
     size: 14
   },
@@ -405,7 +454,7 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     rule: '#8A5A30',
     ink: '#2B2116',
     text: { top: 420, right: 78, bottom: 92, left: 78 },
-    slot: { x: 549, y: 165, w: 150, h: 168, shape: 'rect', radius: 0 },
+    slot: { x: 552, y: 173, w: 95, h: 160, shape: 'rect', radius: 0 },
     moulding: 52,
     size: 14
   },
@@ -454,9 +503,9 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#7A1F22',
     rule: '#8A5A30',
     ink: '#2B2116',
-    text: { top: 360, right: 78, bottom: 92, left: 78 },
-    slot: { x: 540, y: 100, w: 160, h: 210, shape: 'path',
-      path: 'M 0 210 L 0 80 Q 20 20 80 15 Q 140 20 160 80 L 160 210 L 0 210 Z' },
+    text: { top: 360, right: 115, bottom: 92, left: 115 },
+    slot: { x: 559, y: 117, w: 150, h: 194, shape: 'path',
+      path: 'M 0 194 L 0 62 Q 10 14 75 0 Q 140 14 150 62 L 150 194 Z' },
     moulding: 30,
     size: 14
   },
@@ -509,7 +558,11 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
       path: 'M33 0 L160 0 L193 34 L193 219 L160 252 L33 252 L0 219 L0 34 Z'
     },
     moulding: 20,
-    size: 14
+    size: 14,
+    // Centre-aligned name collides with the right-side photo slot
+    // (slot x=500, text left=70, clearance 36).
+    headerAlign: 'left',
+    headerMaxWidth: 500 - 70 - 36
   },
   // Draft fallback geometry, transformed from the default-scale measurements;
   // the fallback print must be remeasured before this row can be delivered.
@@ -693,7 +746,11 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     text: { top: 320, right: 115, bottom: 149, left: 115 },
     slot: { x: 497, y: 180, w: 150, h: 202, shape: 'rect' },
     moulding: 21,
-    size: 13
+    size: 13,
+    // Centre-aligned name collides with the right-side photo slot
+    // (slot x=497, text left=115, clearance 37).
+    headerAlign: 'left',
+    headerMaxWidth: 497 - 115 - 37
   },
   // Kamadeva (new chitra frame, R1-R8): cream chamfered card on a marble
   // mockup backdrop (cropped away in prep: crop 33,40,798,1157); crossed
@@ -735,12 +792,300 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     accent: '#764438',
     rule: '#936355',
     ink: '#2B1E16',
-    text: { top: 318, right: 72, bottom: 40, left: 72 },
+    text: { top: 340, right: 72, bottom: 40, left: 72 },
     slot: {
-      x: 550, y: 83, w: 212, h: 370, shape: 'path',
-      path: 'M 0 370 L 0 14 L 14 0 L 198 0 L 212 14 L 212 356 L 198 370 L 14 370 L 0 356 Z'
+      x: 550, y: 81, w: 157, h: 218, shape: 'path',
+      path: 'M 0 218 L 0 14 L 14 0 L 143 0 L 157 14 L 157 204 L 143 218 L 14 218 L 0 204 Z'
     },
     moulding: 25,
+    size: 13
+  },
+  // Balaji Namam (new chitra frame, R1-R13): soft cream field framed by tall
+  // stone temple pillars with gold motifs and a teal outer border; the classic
+  // Shankha–Namam–Chakra triad at the head; an ornate gold circular frame
+  // with kirti-mukha on a lotus pedestal for the portrait at top right; a
+  // large faint Balaji face with crown behind the details. Source 896 x 1200
+  // (ratio 0.7467, 5.6% off A4). Generator sparkle (four-point logo, bottom
+  // right over the pillar base) painted out by mirroring the bottom-left
+  // corner across the sheet's centre line; verified clean at 400%. Uniform scale 1502/896 =
+  // 1.6786 on a pure white 1588 x 2246 canvas: the outermost drawn pixel
+  // clears 20.5-21 CSS px on the sides and 57.5-58 CSS px top/bottom.
+  // Lanczos + light unsharp; upscaled, not sharper.
+  // Opening = the inside of the innermost gold rim, measured on the print
+  // copy at 4x zoom (2 print px = 1 CSS px): left x=1155, right x=1422,
+  // top y=270, bottom y=590 -> CSS x=577, y=135, w=134, h=160. The oval
+  // follows the drawn inner edge; the 1-2px margin over the measured cream
+  // covers the rim's antialiased edge so no cream hairline survives at 400%.
+  // Moulding 69 = largest reach of the ornate frame + lotus pedestal past
+  // the opening (below: frame bottom print y=728 = CSS 364, opening bottom
+  // 295; above: kirti-mukha reaches CSS 73 = 62; right 53; left 28) — the
+  // lotus pedestal makes it much larger than the 14px default.
+  // Strategy B: A overflowed the absolute maximum load by 250px at size 14,
+  // then by 156px at the 13px floor with normal leading, and still by 27px
+  // with the tightest leading tried; B gives the header the whole space beside
+  // the frame. text.top = 234, ten px below the Namam triad's lowest painted
+  // pixel (CSS y 224), so the header (invocation, kicker, name) centres under
+  // the triad; slotSpacer (float right) reserves the ornate frame beside the
+  // head and the clear:both body starts below it.
+  // The float is 168 x 146 px, and slot.x - clearance - text.left = 365px
+  // leaves well over the 300px floor beside the photo. Left/right = 127/134
+  // clear the innermost pillar edges (CSS x 119 / 668) by 8 CSS px; the tall
+  // pillars force these wide insets. Bottom = 86 keeps the box 8 CSS px above
+  // the bottom border's inner edge (CSS y 1045). The box is 533 x 803 CSS px.
+  // Colours sampled from the art: paper #FDF8E5 (dominant cream field),
+  // accent #6B4A22 (deep gold, 7.51:1 vs paper and 5.12:1 vs the darkest
+  // Balaji-watermark pixel under the text, #D4CFBC; darkened from the sampled
+  // bright frame gold #B3873E at 3.06:1 within the same hue family), rule
+  // #B3873E (sampled frame/Namam gold), ink #2B2116 (14.82:1 vs paper,
+  // 10.10:1 vs the darkest watermark pixel). The watermark's darkest line
+  // is a faint #D4CFBC, so ink and labels both stay legible over it.
+  'balaji-namam': {
+    motif: 'balaji',
+    paper: '#FDF8E5',
+    accent: '#6B4A22',
+    rule: '#B3873E',
+    ink: '#2B2116',
+    text: { top: 234, right: 134, bottom: 86, left: 127 },
+    slot: { x: 577, y: 135, w: 134, h: 160, shape: 'oval' },
+    moulding: 69,
+    size: 13
+  },
+  // Jagannath Dark (new chitra frame, R1-R13): deep charcoal field (#292E2F)
+  // inside a geometric gold Art-Deco border (stepped corners, 8-pointed stars
+  // at corners and mid-sides), a gold line-art Jagannath face in a lotus /
+  // sunburst medallion at the head, a chamfered (octagonal) gold portrait
+  // frame with a dotted bead border at the top right (light empty-state
+  // panel), and a large faint chariot wheel in a lotus outline behind the
+  // details. Source 864 x 1232 (ratio 0.7013, 0.82% off A4); the generator
+  // sparkle (bottom-right, abs ~x 761-842, y 1137-1213) was removed by
+  // pasting the flopped bottom-left corner through an ellipse mask, verified
+  // clean at 400%. Uniform scale 1508/864 = 1.7454 (Lanczos + light unsharp;
+  // upscaled, not sharper) centred on a pure white 1588 x 2246 canvas: the
+  // outermost drawn pixel clears exactly 20.0 CSS px L/R and 24.0 CSS px
+  // T/B (measured; zero non-white pixels in the outer 40 px band).
+  // Slot = the inside of the innermost gold line, measured on the print copy
+  // at 4x (2 print px = 1 CSS px): panel bright x 1050-1326, y 289-678; the
+  // slot covers the panel's soft gradient up to the gold line's inner face
+  // (annapurna precedent) and follows the 45-degree chamfers with a path.
+  // Moulding 13 = largest reach of the drawn frame past the opening (top
+  // bead bar 13, left/right lines 12.5, bottom 12).
+  // Strategy B (strategy A overflowed the absolute maximum load by 64/51/51px
+  // at size 14): the box starts 10px below the medallion's lowest painted
+  // pixel (CSS y 286), so the header (invocation, kicker, name) centres under
+  // the Jagannath face beside the photo; slotSpacer (float right) reserves
+  // the chamfered frame beside the head and the clear:both body starts below
+  // it (spacer 196.5 x 73; 391.5px beside the photo, above the 300px floor).
+  // size 13 (the repo's floor, used with fit evidence): the absolute maximum
+  // load and a 68-char name measure exactly 1123px in en/hi/mr at size 13;
+  // at size 14 the max load fits but the long name overflows by 56/42/42px.
+  // The same evidence covers lineHeight 1.18 (scoped in chitra.tsx, the
+  // annapurna/kamadeva/balaji-namam pattern) which closes the last 4px.
+  // x ~94 / ~700) by 8.8 px and the full-height gold lines (CSS x ~75 /
+  // ~716) by ~28 px; bottom edge (CSS y 976) sits 8 px above the staircase
+  // vertical's lower end and 24.5 px above the bottom inner line (CSS
+  // y 1000.5). Colours sampled from the art: paper #292E2F, accent #E4CF98
+  // (8.96:1 vs paper), rule #C2A25A (5.64:1), ink #F5F1E8 (12.21:1); over
+  // the darkest watermark line (#3E4041) accent measures 6.79:1, ink 9.25:1.
+  'jagannath-dark': {
+    motif: 'jagannath',
+    paper: '#292E2F',
+    accent: '#E4CF98',
+    rule: '#C2A25A',
+    ink: '#F5F1E8',
+    text: { top: 296, right: 103, bottom: 147, left: 103 },
+    slot: {
+      x: 523.5, y: 143, w: 141, h: 197, shape: 'path',
+      path: 'M 20.5 0 L 121.5 0 L 141 20 L 141 176 L 120.5 197 L 21 197 L 0 176 L 0 20 Z'
+    },
+    moulding: 13,
+    size: 13,
+    // Centre-aligned name collides with the right-side photo slot
+    // (slot x=523.5, text left=103, clearance 29).
+    headerAlign: 'left',
+    headerMaxWidth: 523.5 - 103 - 29
+  },
+  // Durga Yantra (new chitra frame): cream field framed by dark charcoal
+  // geometric panels with stepped gold Art-Deco border and gold lotus/star
+  // motifs; Goddess Durga's face in gold line at the head (third eye, crown,
+  // tilak); chamfered gold portrait frame top-right over the dark panel;
+  // large faint lotus-yantra with central hexagram behind the details.
+  // Source 864 x 1232 (ratio 0.7013, within 1% of A4). Generator sparkle
+  // (grey four-point logo, bottom-right ~x 784-828, y 1164-1194 source)
+  // removed by feathered mirror of the bottom-left corner; verified clean
+  // at 400%. Uniform scale 1508/864 on a pure white 1588 x 2246 canvas
+  // (20 CSS px sides, 24 CSS px top/bottom). Lanczos + light unsharp;
+  // upscaled, not sharper.
+  // Slot = inside of the innermost gold line of the chamfered opening,
+  // measured on the print copy at 4x zoom (2 print px = 1 CSS px):
+  // opening CSS x 546-704, y 98-312. 12px chamfers follow the 45-degree
+  // corners. Moulding 10 = largest reach of the drawn frame past the opening
+  // (top edge, measured at CSS y=100).
+  // Strategy B: text starts below the Durga emblem (lowest painted pixel at
+  // CSS y≈200 + 10px clearance = 210) so the header (invocation, kicker,
+  // name) centres under the face; slotSpacer (float right) clears the
+  // chamfered frame which reaches y=312. slot bottom + clearance (312+26=338)
+  // > text.top (210) so spacer is non-null: {w: 196, h: 128}.
+  // slot.x - clearance - text.left = 546-26-78 = 442px >= 300px floor.
+  // Text box clears innermost gold line + 8px: left gold line at CSS x≈543
+  // (text.left=78), right gold line at CSS x≈707 (box edge at CSS 716, 9px
+  // clear), top gold line at CSS y≈95 (text.top=210, well clear), bottom
+  // gold line at CSS y≈304 (box bottom at CSS 1031, well clear).
+  // Colours sampled from the art: paper #F5F3E7 (sampled rgb 245,243,231),
+  // accent #B0873E sampled from gold line (2.88:1 vs paper, below 4.5 floor),
+  // darkened to #9A5A20 (4.74:1 vs paper, same hue family), rule #C2A25A,
+  // ink #2B2116 (15.7:1 vs paper).
+  'durga-yantra': {
+    motif: 'durga',
+    paper: '#F5F3E7',
+    accent: '#9A5A20',
+    rule: '#C2A25A',
+    ink: '#2B2116',
+    text: { top: 338, right: 110, bottom: 92, left: 125 },
+    slot: {
+      x: 546, y: 98, w: 158, h: 214, shape: 'path',
+      path: 'M 12 0 L 146 0 L 158 12 L 158 202 L 146 214 L 12 214 L 0 202 L 0 12 Z'
+    },
+    moulding: 10,
+    size: 14
+  },
+  // Parvati (new chitra frame): cream field with gold floral lotus-vine border,
+  // maroon inner rule, Parvati with crescent moon and lotus at the head, oval
+  // gold frame topped with lotus and crescent top-right, faint Sri Yantra in a
+  // multi-layered lotus watermark. Source 896 x 1200 (ratio 0.7467, 5.6% off
+  // A4); uniform scale 1506/896 on pure white 1588 x 2246 canvas (20.5 CSS px
+  // sides, 57 CSS px top/bottom). Generator sparkle removed by feathered mirror
+  // of bottom-left corner; verified clean at 400%.
+  // Slot = inside of the innermost gold rim of the oval opening, measured on the
+  // print copy at 4x zoom (2 print px = 1 CSS px). Source opening x 620-800,
+  // y 110-310 -> CSS x≈542, y≈151, w≈151, h≈167. The lotus-and-crescent finial
+  // sits above the opening; moulding 28 = largest downward reach of the frame
+  // past the opening (≈30 source px ≈ 25 CSS px) plus buffer for the finial,
+  // matching lakshmi-padma (28) and gokul (26).
+  // Strategy A: text.top = slot bottom (318) + clearance (moulding 28 + 16 = 44)
+  // = 362, so the header (invocation, kicker, name) clears the oval frame and
+  // centres under the Parvati figure (lowest painted pixel CSS y≈300). No float
+  // spacer needed since slot.bottom + clearance <= text.top.
+  // Text box clears innermost maroon rule + 8px: maroon rule inner edges at
+  // CSS x≈42 (left) and CSS x≈752 (right), so text.left/right=70 give ~28px
+  // clearance; bottom=92 keeps 8px above the bottom border's inner edge.
+  // Colours sampled from the art: paper #F6F0E2 (cream field), accent #7A5634
+  // (deep gold, 5.52:1 vs paper), rule #C6A56F (gold, 4.94:1 vs paper), ink
+  // #221300 (deep warm brown, 15.2:1 vs paper).
+  parvati: {
+    motif: 'parvati',
+    paper: '#F6F0E2',
+    accent: '#7A5634',
+    rule: '#C6A56F',
+    ink: '#221300',
+    text: { top: 430, right: 108, bottom: 92, left: 108 },
+    slot: { x: 542, y: 216, w: 129, h: 170, shape: 'oval' },
+    moulding: 28,
+    size: 14
+  },
+  // Lakshmi Padma Cream (new chitra frame, R1-R13): soft cream field inside a
+  // thin sage-and-gold double border with stepped corners and lotus motifs;
+  // a gold-line Lakshmi seated on a full lotus at the head; a cusped multi-
+  // foil gold arch at the top right (pure-white empty-state opening); a large
+  // faint geometric lotus watermark. Source 864 x 1232 (ratio 0.7013, 0.82%
+  // off A4); NO generator sparkle on this source (mirror mean-diff 3.8
+  // levels; bottom-right corner clean at 4x), so the corner lotuses are ART,
+  // left untouched. Uniform scale 1508/864 = 1.7454 (Lanczos + light unsharp;
+  // upscaled, not sharper) centred on a pure white 1588 x 2246 canvas:
+  // outermost drawn pixel clears ~44 CSS px sides, ~26 (top) / ~25 (bottom).
+  // Slot = inside of the innermost gold rim, measured on the print copy at
+  // 4x (2 print px = 1 CSS px): rim inner face print x 1078-1376, y 248-678
+  // -> CSS x 539, y 124, w 150, h 216; the cusped top (apex print 1224,248)
+  // is traced point-by-point below so the path sits on the drawn inner edge
+  // and covers the soft shadow (annapurna precedent). Moulding 13 = largest
+  // frame reach past the opening (left/top/right/bottom 11.5/9/12.5/11,
+  // measured at print y=500 / x=1224 / x=1245).
+  // Strategy A: text.top = slot bottom (340) + clearance (13 + 16 = 29) = 369,
+  // set 370, so the header (invocation, kicker, name) centres under the
+  // Lakshmi figure (lowest painted pixel print y=639 = CSS 319.5) and the
+  // frame needs no float spacer (340+29=369 <= 370, spacer null).
+  // Text box clears innermost border line + 8px: inner sage edges at print
+  // x=136 / 1452 and y=2092, top y~155 (CSS 68 / 726 / 1046 / 77.5), so
+  // left/right 78/78 give 10px clearance. Bottom 122 (not 86) because the
+  // corners are chamfered from print y~2000: at the box bottom the inner
+  // diagonal sits at CSS x 104.5 / 690, so 86 would cross the gold diagonal.
+  // Size 13 (the repo floor; fit evidence: size 14 overflows the absolute
+  // maximum load by 134/110/110px in en/hi/mr) with dense scoped settings in
+  // chitra.tsx (lineHeight 1.15, columnGap 16, section margin 2, h2 14px,
+  // name 26px, header margin 6 — the shankha-mandala pattern); the maximum
+  // load and the 60+ character name measure exactly 1123px in en/hi/mr.
+  // Colours sampled from the art: paper #F6F5F0 (field average 246,245,240;
+  // the arch gold 194,163,99 reads 2.21:1 vs paper, so accent is deepened to
+  // #7A5A1E, 5.81:1, within the same gold hue; the border sage 140,146,132
+  // reads 2.93:1 and cannot carry text), rule #C2A25A (sampled arch gold),
+  // ink #2B2116 (14.44:1 vs paper).
+  'lakshmi-padma-cream': {
+    motif: 'lakshmi',
+    paper: '#F6F5F0',
+    accent: '#7A5A1E',
+    rule: '#C2A25A',
+    ink: '#2B2116',
+    text: { top: 370, right: 78, bottom: 122, left: 78 },
+    slot: { x: 539, y: 124, w: 150, h: 216, shape: 'path',
+      path: 'M 0.5 215 L 0 116 L 3 65 L 6 63 L 9 61 L 12 59 L 15 39 L 18 35 L 21 33.5 L 24 32.5 L 27 32 L 30 32 L 33 30.5 L 36 19.5 L 39 15.5 L 42 14 L 45 13 L 48 11.5 L 51 10.5 L 54 10 L 57 9 L 60 6.5 L 63 6 L 66 4 L 69 2 L 72 0.5 L 75 0 L 78 1 L 81 3 L 84 5.5 L 87 6.5 L 90 7.5 L 93 9 L 96 10 L 99 10.5 L 102 11.5 L 105 13.5 L 108 14 L 111 16.5 L 114 21 L 117 31.5 L 120 32.5 L 123 32 L 126 32.5 L 129 33.5 L 132 35 L 135 39 L 138 60 L 141 61.5 L 144 62.5 L 147 67 L 148.5 215 Z' },
+    moulding: 13,
+    size: 13
+  },
+  // Jagannath Soft (new chitra frame, R1-R13): soft warm cream field
+  // (#F6F5F0, 246,245,240) inside a triple chamfered border (outer gold,
+  // thin gold, inner navy #140F2A-ish) with gold medallion stars outside
+  // each corner; gold line-art Jagannath face (chakra + conch hands) and a
+  // divider rule at the head; chamfered octagonal gold portrait frame
+  // top-right (pure-white empty state); large faint Jagannath face
+  // watermark centred. Source 864 x 1232 (ratio 0.7013, 0.82% off A4).
+  // Generator sparkle (small translucent star over the BR diagonal, ~src
+  // x 795-825, y 1120-1192; box 770,1100,80,92 feathered mirror of the BL
+  // corner in prepare-frames.ts) verified clean at 400%. Uniform scale 1506/864
+  // = 1.743 (Lanczos + light unsharp; upscaled, not sharper) centred on a
+  // pure white 1588 x 2246 canvas: cream field edge at 20.5 CSS px L/R
+  // and 24.5 CSS px T/B (outer 40 print px band is pure white, verified);
+  // the corner medallions land ~40 CSS px in (print gold/dark outermost
+  // 81..1508, 93..2153 -> 40.5/39.5/46.5/46 CSS px).
+  // Slot = inside of the innermost gold line, measured on the print copy
+  // at 4x (2 print px = 1 CSS px): white core print x 1096-1380,
+  // y 228-638 -> CSS x 548, y 114, w 142, h 205; chamfer legs ~16x15
+  // CSS px (diagonal from print (1096,260) to (1128,230)). Moulding 19 =
+  // largest frame reach past the opening (top 18.5, left 17, right 16.5,
+  // bottom 12.5, measured at print x=1200/y=400).
+  // Strategy A: text.top = slot bottom (319) + clearance (19+16) = 354,
+  // so the header (invocation, kicker, name) centres under the Jagannath
+  // face (emblem lowest print y=590 = CSS 295, divider; box clears it by
+  // 59px) and the frame needs no float spacer (spacer null). Strategy B
+  // was rejected: its spacer would be 354-(divider+10)=<60px, failing the
+  // >=60 rule, and it would sit on the divider.
+  // Text box clears innermost navy line + 8px (left inner face CSS 61.5
+  // -> left 70; right inner face CSS 733.5 -> right 69; bottom straight
+  // CSS 1057.5 -> bottom 124 because the navy diagonal at the box sides
+  // (x CSS 70/725) rises to CSS 1011.5/1010.5 and needs 8px perpendicular
+  // (~11.3px vertical) clearance; top 354 is inside the field). Box
+  // 655 x 645 CSS px.
+  // Colours sampled from the art: paper #F6F5F0; accent #7A5A1E (deep
+  // gold, same hue as the sampled border/emblem gold #BC9859 at 2.47:1,
+  // darkened to 5.81:1 vs paper and 4.20:1 vs the darkest watermark
+  // line #D6D2C7; ink #2B2116 at 14.44:1 vs paper and 10.44:1 vs that
+  // watermark line); rule #C2A25A (sampled light gold).
+  // Size 13 (the repo's floor): strategy A at size 14 overflows the
+  // absolute maximum load by 151/114/114px in en/hi/mr, so size 13 with
+  // dense scoped settings in chitra.tsx (lineHeight 1.15, name 26px,
+  // header margin 6, section margin 3, columnGap 20 — the
+  // annapurna/lakshmi-padma-cream pattern). The maximum load and a
+  // 66-char name then measure exactly 1123px in en/hi/mr.
+  'jagannath-soft': {
+    motif: 'jagannath',
+    paper: '#F6F5F0',
+    accent: '#7A5A1E',
+    rule: '#C2A25A',
+    ink: '#2B2116',
+    text: { top: 354, right: 69, bottom: 124, left: 70 },
+    slot: {
+      x: 548, y: 114, w: 142, h: 205, shape: 'path',
+      path: 'M 16 0 L 126 0 L 142 15 L 142 190 L 126 205 L 16 205 L 0 190 L 0 15 Z'
+    },
+    moulding: 19,
     size: 13
   }
 };

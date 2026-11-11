@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
-import { COLLECTIONS, SWATCHES, TEMPLATES, templateBySlug } from '../src/templates/catalog.ts';
+import { COLLECTIONS, SWATCHES, TEMPLATES, templateBySlug, templatesForEditor } from '../src/templates/catalog.ts';
 import { DEV_THEMES } from '../src/templates/devotional-themes.ts';
 import { MOTIFS } from '../src/templates/motifs.ts';
 import { CHITRA_FRAMES } from '../src/templates/chitra-frames.ts';
@@ -60,6 +60,23 @@ test('a layout with swatches offers its accent as one of them', () => {
 test('lookup by slug finds every template and nothing else', () => {
   for (const t of TEMPLATES) assert.equal(templateBySlug(t.slug)?.slug, t.slug);
   assert.equal(templateBySlug('no-such-template'), undefined);
+});
+
+test('pictured duplicates are hidden from the catalogue but remain available to existing orders', () => {
+  for (const slug of ['t2-green-lotus', 't3-murugan-vel']) {
+    assert.ok(!TEMPLATES.some((t) => t.slug === slug), `${slug} should not appear in new choices`);
+    assert.equal(templateBySlug(slug)?.slug, slug, `${slug} must still resolve for existing data`);
+  }
+  for (const slug of ['lakshmi-padma', 'murugan-vel']) {
+    assert.ok(TEMPLATES.some((t) => t.slug === slug), `${slug} must remain available`);
+  }
+});
+
+test('editor retains only the current or original legacy template when needed', () => {
+  assert.ok(!templatesForEditor('kumkum').some((t) => t.slug === 't2-green-lotus'));
+  assert.ok(templatesForEditor('t2-green-lotus').some((t) => t.slug === 't2-green-lotus'));
+  assert.ok(templatesForEditor('kumkum', 't3-murugan-vel').some((t) => t.slug === 't3-murugan-vel'));
+  assert.equal(templatesForEditor('t2-green-lotus', 't2-green-lotus').filter((t) => t.slug === 't2-green-lotus').length, 1);
 });
 
 test('every deity figure a theme names is a real file under public/deities', () => {

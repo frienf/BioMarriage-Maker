@@ -33,7 +33,7 @@ export function LocaleSwitch({ label, dark }: { label: string; dark?: boolean })
           font: 'inherit',
           color: 'inherit',
           background: 'transparent',
-          border: `1px solid ${dark ? 'var(--teal-600)' : 'var(--line)'}`,
+          border: `1px solid ${dark ? 'var(--teal-300)' : 'var(--field-line)'}`,
           borderRadius: 'var(--r-control)',
           padding: '8px 10px',
           minHeight: 'var(--tap)'

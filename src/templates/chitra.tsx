@@ -21,7 +21,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
   const l = labelsFor(data.docLocale);
   const built = buildSections(
     data,
-    (slug === 'vaibhav-lakshmi' || slug === 'jagannath-mandir' || slug === 'aditya' || slug === 'shankha-mandala' || slug === 'annapurna' || slug === 'kamadeva') &&
+    (slug === 'vaibhav-lakshmi' || slug === 'jagannath-mandir' || slug === 'aditya' || slug === 'shankha-mandala' || slug === 'annapurna' || slug === 'kamadeva' || slug === 'balaji-namam' || slug === 'sheshashayi' || slug === 'parvati' || slug === 'lakshmi-padma-cream' || slug === 'jagannath-soft') &&
       data.docLocale === 'mr'
       ? 'devanagari'
       : 'latin'
@@ -54,7 +54,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
         color: f.ink,
         fontFamily: t.body,
         fontSize: f.size,
-        lineHeight: slug === 'aditya' ? 1.24 : slug === 'shankha-mandala' ? 1.2 : slug === 'annapurna' ? 1.18 : slug === 'kamadeva' ? 1.18 : 1.32
+        lineHeight: slug === 'aditya' ? 1.24 : slug === 'shankha-mandala' ? 1.2 : slug === 'annapurna' ? 1.18 : slug === 'kamadeva' ? 1.18 : slug === 'balaji-namam' ? 1.18 : slug === 'jagannath-dark' ? 1.18 : slug === 'sheshashayi' ? 1.18 : slug === 'jagannath-soft' ? 1.15 : slug === 'lakshmi-padma-cream' ? 1.15 : 1.32
       }}
     >
       {/* Never loading="lazy": PrintReady waits for every image to decode, and a
@@ -82,7 +82,7 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
       <div style={{ position: 'relative' }}>
         {spacer ? <div aria-hidden="true" style={{ float: 'right', width: spacer.w, height: spacer.h }} /> : null}
 
-        <header data-chitra-head="" style={{ textAlign: 'center', marginBottom: slug === 'shankha-mandala' ? 6 : slug === 'annapurna' ? 6 : slug === 'kamadeva' ? 6 : 10, display: f.containHeader ? 'flow-root' : undefined }}>
+        <header data-chitra-head="" style={{ textAlign: f.headerAlign ?? 'center', marginBottom: slug === 'shankha-mandala' ? 6 : slug === 'annapurna' ? 6 : slug === 'kamadeva' ? 6 : slug === 'lakshmi-padma-cream' ? 6 : slug === 'jagannath-soft' ? 6 : 10, display: f.containHeader ? 'flow-root' : undefined }}>
           <p lang={t.invLang} style={{ margin: 0, fontFamily: t.invFont, fontSize: 13, color: f.accent }}>
             {t.invocation}
           </p>
@@ -92,29 +92,40 @@ export function ChitraTemplate({ data, slug, frameSrc }: { data: Biodata; slug: 
             data-chitra-plate={f.plate ? '' : undefined}
             style={
               f.plate
-                ? { display: 'inline-block', minWidth: f.plate.w, minHeight: f.plate.h, maxWidth: '100%', boxSizing: 'border-box', padding: '0 12px', marginTop: 2, background: f.plate.fill }
+                ? {
+                    display: 'inline-block',
+                    minWidth: f.plate.w,
+                    minHeight: f.plate.h,
+                    maxWidth: f.headerMaxWidth ?? '100%',
+                    boxSizing: 'border-box',
+                    padding: '0 12px',
+                    marginTop: 2,
+                    background: f.plate.fill
+                  }
+                : f.headerMaxWidth
+                ? { maxWidth: f.headerMaxWidth }
                 : undefined
             }
           >
             <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 600 }}>{built.kicker}</p>
-            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva') ? 26 : slug === 'shankha-mandala' ? 22 : 28, lineHeight: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva') ? 1.1 : slug === 'shankha-mandala' ? 1.05 : 1.15, color: f.accent }}>
+            <h1 style={{ margin: 0, fontFamily: t.head, fontWeight: t.headWeight, fontSize: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva' || slug === 'balaji-namam' || slug === 'sheshashayi' || slug === 'lakshmi-padma-cream' || slug === 'jagannath-soft') ? 26 : slug === 'shankha-mandala' ? 22 : 28, lineHeight: (slug === 'simha' || slug === 'aditya' || slug === 'annapurna' || slug === 'kamadeva' || slug === 'balaji-namam' || slug === 'sheshashayi' || slug === 'lakshmi-padma-cream' || slug === 'jagannath-soft') ? 1.1 : slug === 'shankha-mandala' ? 1.05 : 1.15, color: f.accent }}>
               {built.name}
             </h1>
           </div>
           {built.subtitle ? <p style={{ margin: '2px 0 0', fontSize: slug === 'shankha-mandala' ? 13 : 14 }}>{built.subtitle}</p> : null}
         </header>
 
-        <div data-chitra-body="" style={{ clear: 'both', columnCount: 2, columnGap: slug === 'shankha-mandala' ? 20 : 24 }}>
+        <div data-chitra-body="" style={{ clear: 'both', columnCount: 2, columnGap: slug === 'lakshmi-padma-cream' ? 16 : slug === 'shankha-mandala' ? 20 : slug === 'jagannath-soft' ? 20 : 24 }}>
           {built.sections.map((sec, i) => (
-            <section key={i} style={{ marginBottom: slug === 'simha' ? 9 : slug === 'aditya' ? 5 : slug === 'shankha-mandala' ? 2 : slug === 'annapurna' ? 3 : slug === 'kamadeva' ? 3 : 7 }}>
+            <section key={i} style={{ marginBottom: slug === 'simha' ? 9 : slug === 'aditya' ? 5 : slug === 'shankha-mandala' ? 2 : slug === 'lakshmi-padma-cream' ? 2 : slug === 'annapurna' ? 3 : slug === 'kamadeva' ? 3 : slug === 'balaji-namam' ? 3 : slug === 'jagannath-dark' ? 3 : slug === 'sheshashayi' ? 3 : slug === 'jagannath-soft' ? 3 : 7 }}>
               <h2
                 style={{
-                  margin: slug === 'shankha-mandala' ? '0 0 2px' : '0 0 3px',
-                  paddingBottom: slug === 'shankha-mandala' ? 1 : 2,
+                  margin: slug === 'shankha-mandala' || slug === 'lakshmi-padma-cream' ? '0 0 2px' : '0 0 3px',
+                  paddingBottom: slug === 'shankha-mandala' || slug === 'lakshmi-padma-cream' ? 1 : 2,
                   borderBottom: `1px solid ${f.rule}`,
                   fontFamily: t.head,
                   fontWeight: t.headWeight,
-                  fontSize: slug === 'shankha-mandala' ? 14 : 16,
+                  fontSize: slug === 'shankha-mandala' || slug === 'lakshmi-padma-cream' ? 14 : 16,
                   lineHeight: 1.25,
                   color: f.accent,
                   breakAfter: 'avoid'

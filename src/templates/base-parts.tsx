@@ -44,34 +44,62 @@ export function PortraitPhoto({
   tint: string;
   silhouette: string;
 }) {
+  const border = style?.border;
+  const borderRadius = style?.borderRadius;
+
   return (
-    <figure style={{ margin: 0, width, height, boxSizing: 'border-box', overflow: 'hidden', flex: 'none', ...style }}>
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          background: tint,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          borderRadius: 'inherit'
-        }}
-      >
-        {data.photo?.src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={data.photo.src}
-            alt={alt}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: data.photo.position || '50% 30%' }}
-          />
-        ) : (
-          <svg aria-hidden="true" width="70%" viewBox="0 0 120 150">
-            <circle cx="60" cy="56" r="28" fill={silhouette} />
-            <path d="M8 150 C 14 104, 36 92, 60 92 C 84 92, 106 104, 112 150 Z" fill={silhouette} />
-          </svg>
-        )}
-      </div>
+    <figure
+      style={{
+        margin: 0,
+        width,
+        height,
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        flex: 'none',
+        position: 'relative',
+        background: tint,
+        ...style,
+        padding: undefined,
+        border: undefined,
+      }}
+    >
+      {data.photo?.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={data.photo.src}
+          alt={alt}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: data.photo.position || '50% 30%',
+          }}
+        />
+      ) : (
+        <svg
+          aria-hidden="true"
+          width="70%"
+          viewBox="0 0 120 150"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        >
+          <circle cx="60" cy="56" r="28" fill={silhouette} />
+          <path d="M8 150 C 14 104, 36 92, 60 92 C 84 92, 106 104, 112 150 Z" fill={silhouette} />
+        </svg>
+      )}
+      {border && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            border,
+            borderRadius,
+            boxSizing: 'border-box',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
     </figure>
   );
 }

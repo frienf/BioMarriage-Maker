@@ -18,14 +18,13 @@ interface FadeInProps extends HTMLMotionProps<'div'> {
 }
 
 /**
- * Fade-in animation component with configurable options.
- * Respects prefers-reduced-motion automatically via MotionConfig.
+ * Keep server-rendered content visible even before JavaScript runs.
  */
 export function FadeIn({
   children,
   delay = 0,
   duration = motionTokens.duration.normal,
-  y = motionTokens.distance.md,
+  y: _y = motionTokens.distance.md,
   once = true,
   viewportAmount = 0.3,
   className,
@@ -34,7 +33,7 @@ export function FadeIn({
 }: FadeInProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration, ease: motionTokens.easing.smooth, delay }}
       whileInView={once ? undefined : { opacity: 1, y: 0 }}
@@ -49,8 +48,7 @@ export function FadeIn({
 }
 
 /**
- * Staggered fade-in for lists of children.
- * Each child fades in with a small delay after the previous one.
+ * Group content without hiding it in the server-rendered page.
  */
 interface StaggeredFadeInProps extends Omit<FadeInProps, 'delay'> {
   staggerDelay?: number;
@@ -72,7 +70,7 @@ export function StaggeredFadeIn({
 }: StaggeredFadeInProps) {
   return (
     <motion.div
-      initial="hidden"
+      initial={false}
       animate="visible"
       variants={{
         hidden: { opacity: 0 },
@@ -108,8 +106,7 @@ export function StaggeredFadeIn({
 }
 
 /**
- * Slide-in from left or right based on direction.
- * Useful for side panels, drawers, or directional reveals.
+ * Keep grouped content visible during server rendering.
  */
 interface SlideInProps extends FadeInProps {
   direction?: 'left' | 'right' | 'up' | 'down';
@@ -117,24 +114,17 @@ interface SlideInProps extends FadeInProps {
 
 export function SlideIn({
   children,
-  direction = 'left',
+  direction: _direction = 'left',
   delay = 0,
   duration = motionTokens.duration.normal,
-  distance = 40,
+  distance: _distance = 40,
   className,
   style,
   ...props
 }: SlideInProps & { distance?: number }) {
-  const initial = {
-    left: { opacity: 0, x: -distance },
-    right: { opacity: 0, x: distance },
-    up: { opacity: 0, y: distance },
-    down: { opacity: 0, y: -distance },
-  }[direction];
-
   return (
     <motion.div
-      initial={initial}
+      initial={false}
       animate={{ opacity: 1, x: 0, y: 0 }}
       transition={{ duration, ease: motionTokens.easing.smooth, delay }}
       className={className}

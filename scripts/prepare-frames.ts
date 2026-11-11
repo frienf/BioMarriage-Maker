@@ -280,6 +280,174 @@ const FRAMES: Record<string, Prep> = {
     fillColour: { r: 255, g: 255, b: 255 },
     printSize: { w: 1588, h: 2246 },
     sharpen: true
+  },
+  // Balaji Namam (new chitra frame): soft cream field framed by tall stone
+  // temple pillars with gold motifs and a teal outer border; the classic
+  // Shankha–Namam–Chakra triad at the head; an ornate gold circular frame
+  // with kirti-mukha on a lotus pedestal at top right; a large faint Balaji
+  // face watermark centred. Source 896 x 1200 (ratio 0.7467, 5.6% off A4).
+  // Generator sparkle (four-point logo, bottom-right over the pillar base)
+  // painted out by mirroring the bottom-left corner; verify clean at 400%.
+  // Uniform scale 1506/896 = 1.6808 on a pure white 1588 x 2246 canvas:
+  // side margins ~20.5 CSS px, top/bottom ~57 CSS px. Lanczos + light
+  // unsharp; upscaled, not sharper.
+  'balaji-namam': {
+    src: 'image_75199cb.jpg',
+    sparkle: { x: 780, y: 1110, w: 80, h: 80 },
+    // 1502/896 = 1.6786: scaled art 1502 x 2010 centred on 1588 x 2246 gives
+    // 43px expected side margins; with ~2px Lanczos antialiasing the outermost
+    // drawn pixel lands at ~41px = 20.5 CSS px, clearing the 20 CSS px rule.
+    scale: 1502 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Jagannath Dark (new chitra frame, R1-R13): deep charcoal field with a
+  // geometric gold Art-Deco border (stepped corners, 8-pointed stars), a
+  // gold line-art Jagannath face in a lotus/sunburst medallion at the head,
+  // a chamfered (octagonal) gold portrait frame with a dotted bead border at
+  // the top right (light empty-state panel), and a large faint chariot wheel
+  // in a lotus outline behind the details. Source 864 x 1232 (ratio 0.7013,
+  // 0.82% off A4). The only non-art element is the generator sparkle (white
+  // 4-pointed logo, abs ~x 761-842, y 1137-1213) over the bottom-right corner
+  // star; it is removed by pasting the flopped bottom-left corner through a
+  // star-shaped mask (reference/jagannath-dark-sparkle-mask.png), so only the
+  // sparkle silhouette is replaced — every other source pixel is untouched
+  // (the corners are mirror-symmetric at dx = 0, mean abs diff 3.1 levels).
+  // Uniform scale 1508/864 = 1.7454 on a pure white 1588 x 2246 canvas:
+  // 20.0 CSS px sides, 24.0 CSS px top/bottom. Lanczos + light unsharp;
+  // upscaled, not sharper.
+  'jagannath-dark': {
+    src: 'image_9c7d10bf.jpg',
+    sparkle: { x: 650, y: 1050, w: 214, h: 182 },
+    sparkleMask: 'reference/jagannath-dark-sparkle-mask.png',
+    scale: 1508 / 864,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Sheshashayi (new chitra frame): burnt-edge parchment, carved gold-and-brown
+  // wave scroll with inward lotus buds, gold five-hooded naga emblem over a
+  // lotus at the head, oval photo opening top-right under a jewelled cobra
+  // crown with a looped snake tail below, faint Vishnu-on-Shesha watermark in
+  // the middle. Source image_f627742.jpg (896 x 1200, ratio 0.7467, +5.6% off
+  // A4). Generator sparkle (four-point logo, bottom-right ~x 838, y 1140)
+  // over the border corner; repaired by mirroring the bottom-left corner with
+  // feathering. A4 ratio reached by uniform scale 1506/896 so the outermost
+  // drawn pixel clears 20 CSS px on every side; the margin is pure white
+  // (R1: white outside the parchment is part of the art). Lanczos + light
+  // unsharp; upscaled, not sharper.
+  sheshashayi: {
+    src: 'image_f627742.jpg',
+    sparkle: { x: 800, y: 1100, w: 70, h: 76 },
+    sparkleFeather: 6,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Durga Yantra (new chitra frame): cream field framed by dark charcoal
+  // geometric panels with stepped gold Art-Deco border and gold lotus/star
+  // motifs; Goddess Durga's face in gold line at the head (third eye, crown,
+  // tilak); chamfered gold portrait frame top-right over the dark panel;
+  // large faint lotus-yantra with central hexagram behind the details.
+  // Source 864 x 1232 (ratio 0.7013, within 1% of A4). Generator sparkle
+  // (grey four-point logo, bottom-right ~x 788-822, y 1168-1192) painted out
+  // by feathered mirror of the bottom-left corner; verified clean at 400%.
+  // A4 ratio reached by uniform scale 1508/864 so the outermost drawn pixel
+  // clears 20 CSS px on every side; margin is pure white because the border
+  // runs to the source edge (corner-colour padding would be dark). No crop:
+  // the art is the page. Lanczos + light unsharp; upscaled, not sharper.
+  'durga-yantra': {
+    src: 'image_a5ad13d2.jpg',
+    sparkle: { x: 784, y: 1164, w: 44, h: 30 },
+    sparkleFeather: 6,
+    scale: 1508 / 864,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Parvati (new chitra frame): cream field with gold floral lotus-vine border,
+  // maroon inner rule, Parvati with crescent moon and lotus at the head, oval
+  // gold frame topped with lotus and crescent top-right, faint Sri Yantra in a
+  // multi-layered lotus watermark. Source 896 x 1200 (ratio 0.7467, 5.6% off
+  // A4). Generator sparkle (four-point logo, bottom-right over floral border)
+  // removed by feathered mirror of the bottom-left corner; verified clean at
+  // 400%. Uniform scale 1506/896 = 1.6808 on a pure white 1588 x 2246 canvas
+  // (20.5 CSS px sides, 57 CSS px top/bottom). Floral border runs to source
+  // edges so fill is pure white. Lanczos + light unsharp; upscaled, not sharper.
+  parvati: {
+    src: 'image_cdc55465.jpg',
+    sparkle: { x: 780, y: 1120, w: 80, h: 70 },
+    sparkleFeather: 6,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Lakshmi Padma Cream (new chitra frame, R1-R8): soft cream field inside a
+  // thin sage-and-gold double border with stepped corners and lotus motifs;
+  // a gold-line Lakshmi seated on a full lotus at the head; a cusped multi-
+  // foil gold arch at the top right (pure-white empty-state opening); a large
+  // faint geometric lotus watermark. Source 864 x 1232 (ratio 0.7013, 0.82%
+  // off A4). This source carries NO generator sparkle: the bottom-right
+  // corner was compared against the mirrored bottom-left at 4x (mean abs
+  // diff 3.8 levels) and the stepped border + corner lotus are clean ART,
+  // left untouched, so `sparkle: false` skips the mirror-repair. Uniform
+  // scale 1508/864 = 1.7454 (Lanczos + light unsharp; upscaled, not sharper)
+  // centred on a pure white 1588 x 2246 canvas: outermost drawn pixel lands
+  // ~44 CSS px from the sides and ~26 CSS px from top/bottom, all >= 20.
+  'lakshmi-padma-cream': {
+    src: 'image_82810107.jpg',
+    sparkle: false,
+    scale: 1508 / 864,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Jagannath Soft (new chitra frame, R1-R8): soft warm cream field inside a
+  // triple (outer gold + thin gold + inner navy) chamfered border with gold
+  // medallion stars outside each corner; gold line-art Jagannath face with
+  // chakra/conch hands and a divider rule at the head; chamfered octagonal
+  // gold portrait frame top-right (pure-white empty state); large faint
+  // Jagannath face watermark centred. Source 864 x 1232 (ratio 0.7013,
+  // 0.82% off A4). Generator sparkle (small translucent star over the BR
+  // diagonal, ~x 795-825, y 1120-1192) removed by feathered mirror of the
+  // BL corner (box 770,1100,80,92; corners mirror-symmetric, mean abs
+  // diff ~24 levels; the bottom star tip touches the medallion top, so
+  // the box includes it — the mirrored medallion top is identical art),
+  // verified clean at 400%. Uniform
+  // scale 1506/864 = 1.743 (864x1232 -> 1506x2148) centred on pure white
+  // 1588 x 2246: the cream field edge (src x=0) sits at print x=41,
+  // y=49, i.e. 20.5/24.5 CSS px from L/R/T/B, all >= 20 CSS px with a
+  // 1px buffer for Lanczos bleed. (The corner medallions at src x=23
+  // land ~40 CSS px in.) Lanczos + light unsharp; upscaled, not sharper.
+  'jagannath-soft': {
+    src: 'image_f92b3fd0.jpg',
+    sparkle: { x: 770, y: 1100, w: 80, h: 92 },
+    sparkleFeather: 10,
+    scale: 1506 / 864,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
+  },
+  // Jagannath Triad (new chitra frame): soft warm cream field inside a thick
+  // terracotta border with rope texture and a continuous triangular sawtooth
+  // band; the Puri triad of Jagannath, Balabhadra and Subhadra at the head;
+  // a simple rectangular photo frame at top-right; a faint Jagannath Temple
+  // watermark in the lower half. Source 896 x 1200 (ratio 0.7467, 5.6% off
+  // A4). Generator sparkle (four-point logo, bottom-right over the right
+  // border area) painted out by mirroring the bottom-left corner. Uniform
+  // scale 1506/896 on a pure white 1588 x 2246 canvas (20.5 CSS px sides,
+  // 57 CSS px top/bottom). Lanczos + light unsharp; upscaled, not sharper.
+  'jagannath-triad': {
+    src: 'image_d52a7a85.jpg',
+    sparkle: { x: 770, y: 990, w: 70, h: 140 },
+    sparkleFeather: 6,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
   }
 };
 
