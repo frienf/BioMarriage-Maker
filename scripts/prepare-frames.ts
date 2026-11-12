@@ -448,6 +448,25 @@ const FRAMES: Record<string, Prep> = {
     fillColour: { r: 255, g: 255, b: 255 },
     printSize: { w: 1588, h: 2246 },
     sharpen: true
+  },
+  // Saraswati Vidya (new chitra frame): cream field with gold veena-instrument
+  // side borders and top/bottom scroll flourishes, veena + books + lotus emblem
+  // at the head, swan-topped ornate oval portrait frame top-right, large faint
+  // seated Saraswati watermark. Source 896 x 1200 (ratio 0.7467, 5.6% off A4).
+  // Generator sparkle (four-point logo, bottom-right ~x 820-880, y 1125-1165
+  // over the corner veena) removed by feathered mirror of the bottom-left
+  // corner; verified clean at 400%. Veena borders, emblem, swan frame and
+  // watermark untouched. Uniform scale 1506/896 on a pure white 1588 x 2246
+  // canvas (20.5 CSS px sides, 57 CSS px top/bottom). Lanczos + light unsharp;
+  // upscaled, not sharper.
+  'saraswati-vidya': {
+    src: 'image_d6a38b0.jpg',
+    sparkle: { x: 820, y: 1125, w: 60, h: 40 },
+    sparkleFeather: 6,
+    scale: 1506 / 896,
+    fillColour: { r: 255, g: 255, b: 255 },
+    printSize: { w: 1588, h: 2246 },
+    sharpen: true
   }
 };
 

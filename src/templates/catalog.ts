@@ -352,6 +352,18 @@ const ALL_TEMPLATES: TemplateDef[] = [
   // scaled 1506/864.
   { slug: 'jagannath-soft', title: 'Jagannath Soft', collection: 'devotional', layout: 'chitra', motif: 'jagannath', deities: [], pricePaise: PRICE.standard, docLocales: ALL, pages: 1, // exception: new motif, no specific deity entry
     blurb: 'Soft cream field inside a thin gold and navy chamfered border with corner stars, Lord Jagannath’s fine gold line-art face at the head, a chamfered gold frame for the portrait, and a large faint classic Jagannath face behind the details.' },
+  // Saraswati Vidya (new chitra frame, devotional): soft cream field framed by
+  // gold veena-instrument borders down both sides with scroll flourishes top
+  // and bottom, a veena resting on books with a lotus and a small kalash at the
+  // head, an ornate oval portrait frame topped with a swan (hamsa) top-right,
+  // and a large faint seated Saraswati playing the veena behind the details.
+  // Distinct from the existing 'saraswati' chitra frame (swan corner
+  // ornaments, octagonal frame, yantra watermark on white) — this design uses
+  // the full veena instrument border, a swan-crowned oval opening and a seated
+  // figure watermark on cream. Generator sparkle removed; art scaled 1506/896
+  // on pure white so the outermost drawn pixel clears 20 CSS px on every side.
+  { slug: 'saraswati-vidya', title: 'Saraswati Vidya', collection: 'devotional', layout: 'chitra', motif: 'saraswati', deities: ['saraswati'], pricePaise: PRICE.standard, docLocales: ALL, pages: 1,
+    blurb: 'Soft cream field framed by gold veena-instrument borders, a veena with books and lotus at the head, an ornate oval frame topped with a swan for the portrait, and a faint seated Saraswati playing the veena behind the details.' },
 ];
 
 // Retain legacy entries for saved drafts and paid orders without listing duplicates.

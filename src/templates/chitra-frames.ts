@@ -1087,6 +1087,44 @@ export const CHITRA_FRAMES: Record<string, ChitraFrame> = {
     },
     moulding: 19,
     size: 13
+  },
+  // Saraswati Vidya (new chitra frame): cream field with gold veena-instrument
+  // side borders and top/bottom scroll flourishes, veena + books + lotus emblem
+  // at the head, swan-topped ornate oval portrait frame top-right, large faint
+  // seated Saraswati watermark. Source 896 x 1200 (ratio 0.7467, 5.6% off A4).
+  // Generator sparkle (four-point logo, bottom-right over the corner veena)
+  // removed by feathered mirror of the bottom-left corner; verified clean at
+  // 400%. Veena borders, emblem, swan frame and watermark untouched. Uniform
+  // scale 1506/896 on a pure white 1588 x 2246 canvas (20.5 CSS px sides,
+  // 57 CSS px top/bottom). Lanczos + light unsharp; upscaled, not sharper.
+  // Measured on the print copy at 4x zoom (2 print px = 1 CSS px):
+  //   - oval opening = inside of innermost gold rim: print x 1156-1367,
+  //     y 358-644 -> CSS x 578, y 179, w 106, h 143.
+  //   - frame bottom reaches print y 699 (CSS 349.5), i.e. 27.5 CSS px below
+  //     the slot bottom (322); moulding 28 covers it and keeps strategy A's
+  //     spacer null (322 + 28 + 16 = 366 = text.top).
+  //   - left veena border right edge ~CSS 80; right border left edge ~CSS 713
+  //     (measured over the clean text band y738-1980 print); bottom border top
+  //     edge ~CSS 1001.
+  //   - text.top = frame bottom 349.5 + 16 = 366 (strategy A: header centred
+  //     under the top emblem zone, below the oval frame). No float spacer.
+  //   - text.left/right = 90 clear side borders by ~10px (R6 needs >= 8px);
+  //     text.bottom = 132 clears the bottom border/corner flourish by ~10px.
+  // Colours sampled from the art: paper #FAF1DB; accent #8A5A22 (4.80:1 vs
+  // paper, darkened within the gold hue from the sampled light gold); rule
+  // #8A5A22; ink #2B2116 (14.0:1 vs paper).
+  // Strategy A verified by npm run fit (size 14) for en/hi/mr at the maximum
+  // load; no plate, no containHeader, headerAlign default centre.
+  'saraswati-vidya': {
+    motif: 'saraswati',
+    paper: '#FAF1DB',
+    accent: '#8A5A22',
+    rule: '#8A5A22',
+    ink: '#2B2116',
+    text: { top: 366, right: 90, bottom: 132, left: 90 },
+    slot: { x: 578, y: 179, w: 106, h: 143, shape: 'oval' },
+    moulding: 28,
+    size: 14
   }
 };
 
